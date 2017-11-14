@@ -1,0 +1,73 @@
+% arara: xelatex: { synctex: true, action: nonstopmode, options: "-halt-on-error" }
+% arara: clean: { files: [ mattbell-coursework1.aux, mattbell-coursework1.bbl, mattbell-coursework1.bcf, mattbell-coursework1.blg, mattbell-coursework1.log, mattbell-coursework1.out, mattbell-coursework1.synctex.gz, mattbell-coursework1.run.xml ] }
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry} \pagestyle{headings} \usepackage{fontspec}
+\usepackage{titlesec} \usepackage{titling} \usepackage{xcolor}
+
+\definecolor{colorDoc}{HTML}{333333}
+
+\newfontfamily\headingfont[]{Circular Std Book}
+\setmonofont[Color=colorDoc]{Operator Mono}
+\setmainfont[Color=colorDoc]{Roboto}
+\titleformat*{\section}{\LARGE\bfseries\headingfont}
+\titleformat*{\subsection}{\Large\bfseries\headingfont}
+\titleformat*{\subsubsection}{\large\bfseries\headingfont}
+\renewcommand{\maketitlehooka}{\headingfont}
+
+\title{\protect\parbox{\textwidth}{\protect\centering %
+Tracking Wildlife Counts Using the Internet Of Things: \\
+Project Plan \\
+\large Supervisor: Dr Kevin Bryson}} \author{Matthew Bell}
+
+\begin{document} \maketitle
+
+\section*{Aims \& Objectives}
+\begin{itemize}
+    \item To build an Internet of Things solution
+        that can accurately detect the type and presence of various animals
+    \item To implement a computer vision solution that allows the detection of
+        animals onboard a low powered, portable computer.
+    \item Learn a deeper understanding of the Internet of Things and
+        sensor-driven systems through working on a technically-rigourous project
+\end{itemize}
+
+\section*{Expected Outcome \& Deliverables}
+\begin{itemize}
+    \item A program built for the Creator Ci40 prototyping board that can read
+        in an image sent by the external camera module, and classify the types
+        and counts of animals in the image, before sending this data to a base
+        station via a LORA connection
+    \item A program for the IR clicker device to detect movement and send a
+        message to a nearby camera device
+    \item A program for the camera device to take a photo when it receives a
+        command via 6LoWPAN and send it to the Ci40 board
+    \item A simple cloud service to store and display results received from the
+        prototype boards
+    \item A rigorous testing regime for as much code as possible
+    \item (If possible) a real-life test of the system in an uncontrolled
+        environment (i.e. a park or zoo)
+    \item A design specification for the programs.
+\end{itemize}
+
+\section*{Work Plan}
+\begin{itemize}
+    \item Project start to end of October, search for exisitng solutions and
+        formalise requiremnets with supervisor
+    \item October to November, begin to get familiar with the prototyping boards
+        and their associated toolings
+    \item November to end of February, work on getting the following systems
+        operational:
+        \begin{itemize}
+            \item Triggering camera shutter via command sent over 6LoWPAN
+            \item Detecting movement from the IR sensing device and sending a
+                6LoWPAN command
+            \item Deciphering data sent from camera to Ci40 into a processible
+                image
+            \item Work on image recognition of images on the Ci40.
+        \end{itemize}
+    \item Mid-February to end of March, write project report and build simple
+        cloud system.
+\end{itemize}
+
+\end{document}
