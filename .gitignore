@@ -220,3 +220,5 @@ TSWLatexianTemp*
 # expex forward references with \gathertags
 *-tags.tex
 diff*
+classify/gold_standard_data.csv
+classify/all_images.csv
