@@ -1,0 +1,83 @@
+% arara: xelatex: { synctex: true, action: nonstopmode, options: "-halt-on-error" }
+% arara: clean: { files: [ interim-report.aux, interim-report.bbl, interim-report.bcf, interim-report.blg, interim-report.log, interim-report.out, interim-report.synctex.gz, interim-report.run.xml ] }
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry} \pagestyle{headings} \usepackage{fontspec}
+\usepackage{titlesec} \usepackage{titling} \usepackage{xcolor}
+
+\definecolor{colorDoc}{HTML}{333333}
+
+\newfontfamily\headingfont[]{Circular Std Book}
+\setmonofont[Color=colorDoc]{Operator Mono}
+\setmainfont[Color=colorDoc]{Roboto}
+\titleformat*{\section}{\LARGE\bfseries\headingfont}
+\titleformat*{\subsection}{\Large\bfseries\headingfont}
+\titleformat*{\subsubsection}{\large\bfseries\headingfont}
+\renewcommand{\maketitlehooka}{\headingfont}
+
+\title{\protect\parbox{\textwidth}{\protect\centering %
+Tracking Wildlife Counts Using the Internet Of Things: \\
+Project Plan \\ \vspace{1em}
+\large Supervisor: Dr Kevin Bryson}} \author{Matthew Bell}
+
+\begin{document} \maketitle
+
+\begin{center}
+    \huge \bfseries \headingfont Interim Report
+\end{center}
+
+\section*{Current Progress}
+\begin{itemize}
+    \item Designed architecture for project. The solution will consist of two
+    6LoWPAN "clicker" devices connected to a central base station. The base
+    station will use a C program to control the connections to the clicker
+    devices (receiving IR activation signal and camera information), and will
+    execute a Python program that will take the image and classify the
+    content of the image.
+    \item Set up project toolchain. This took far longer than expected,
+    because of the intricacies of the devices being used in the project. The
+    base station has had a lot of trouble connecting to the Internet so
+    development has been slow in that regard, and until very recently I had
+    trouble programming the clicker devices. However, these issues have been
+    fixed, and despite being a little behind on progress, I can now proceed
+    to program these devices.
+    \item Learning about convoluted neural networks and computer vision. The
+    above roadblocks led me to start working on the image classification part
+    of the project earlier than planned, and quickly decided upon using the
+    Tensorflow library as the main way of classifying images from the camera.
+    In the short term, I'm using Google's Inception model, which boasts a
+    high accuracy rating on a generic image classification task (ImageNet).
+    By the end of the project, if I have time, I'd still like to create my
+    own classifier that is bespoke for this project, and trained on similar
+    test data.
+    \item Identified similar projects and how they approached their problems.
+    During my research, I found the Snapshot Serengeti project and how they
+    were using human volunteers to help classify their images and to train
+    their own model for classifying images. This wasn't especially helpful on
+    its own, however it did mean that I discovered a high quality training
+    set of over three thousand labelled images, which classified 40 different
+    types of animal, which I can use to train my own model.
+\end{itemize}
+
+\section*{Outstanding Tasks}
+
+\begin{itemize}
+    \item Program the camera and Infrared sensor boards. This should take
+    less time now that I've passed one of the main roadblocks (setting up the
+    tooling), however completing this is the highest priority. There might be
+    some further issues with developing the camera shutter program, since
+    prior work by other students has proven unsuccessful, so this is where
+    I'll be dedicating a large amount of my time.
+    \item Programming the base station's programs. I need to write three
+    programs \textendash~a program to receive 6LoWPAN signals, a program to
+    run the classifier, and a program to transmit the results of the data
+    over a Lorawan connection. The classifier program is relatively low
+    priority since I already have a boilerplate version running, but the
+    6LoWPAN controller is very important.
+    \item Creating a simple web app for receiving and processing results.
+    This is very low priority and will probably take the least amount of time
+    to build. This will be completed as one of the final tasks of the
+    project.
+\end{itemize}
+
+\end{document}
