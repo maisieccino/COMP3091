@@ -30,10 +30,10 @@ Project Plan \\ \vspace{1em}
 \begin{itemize}
     \item Designed architecture for project. The solution will consist of two
     6LoWPAN "clicker" devices connected to a central base station. The base
-    station will use a C program to control the connections to the clicker
-    devices (receiving IR activation signal and camera information), and will
-    execute a Python program that will take the image and classify the
-    content of the image.
+    station will use a python program to control the connections to the
+    clicker devices (receiving IR activation signal and camera information),
+    and will then take the image received from the camera and classify the
+    its content.
     \item Set up project toolchain. This took far longer than expected,
     because of the intricacies of the devices being used in the project. The
     base station has had a lot of trouble connecting to the Internet so
@@ -68,12 +68,11 @@ Project Plan \\ \vspace{1em}
     some further issues with developing the camera shutter program, since
     prior work by other students has proven unsuccessful, so this is where
     I'll be dedicating a large amount of my time.
-    \item Programming the base station's programs. I need to write three
-    programs \textendash~a program to receive 6LoWPAN signals, a program to
-    run the classifier, and a program to transmit the results of the data
-    over a Lorawan connection. The classifier program is relatively low
-    priority since I already have a boilerplate version running, but the
-    6LoWPAN controller is very important.
+    \item Programming the base station's programs. I need to write one single
+    python program that will communicate with the clicker boards over
+    6LoWPAN, receive camera data when the shutter is activated, process and
+    classify the contents of the image, and then send those results over
+    Lorawan.
     \item Creating a simple web app for receiving and processing results.
     This is very low priority and will probably take the least amount of time
     to build. This will be completed as one of the final tasks of the
