@@ -1,13 +1,21 @@
+#
+# A very simple UDP server.
+# Just listens to port 9876 and prints to STDOUT
+# Plays nicely with `tee` as a result.
+import signal
 import socket
+import sys
 from datetime import datetime
 
-# listen for data and print it to STDOUT
 listen_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
 listen_sock.bind(("::", 9876))
 
+def quit_handler(signal, frame):
+    print("Server terminating, goodbye")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, quit_handler)
+
 while True:
     data, addr_info = listen_sock.recvfrom(1024)
-    body = data.decode("ascii")
-    print("RX [{}] {}".format(datetime.utcnow().isoformat(), body))
-
-print("Server terminated")
+    print("RX [{}] {}".format(datetime.utcnow().isoformat(), data))
