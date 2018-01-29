@@ -13,6 +13,8 @@ $(call check_defined, DEVICE_ID, unique ID of the clicker)
 CFLAGS += -DPAIR_ID=$(PAIR_ID)
 CFLAGS += -DDEVICE_ID=$(DEVICE_ID)
 
+APPS += letmecreateiot
+
 CONTIKI_PROJECT = detect
 CONTIKI = /home/mbell/git/contiki
 TARGET = mikro-e

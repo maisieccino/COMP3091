@@ -23,6 +23,8 @@ def command_id(obj):
     device_pairs[pair_id][obj["type"]] = device_id
     print("device pair {}: now {}".format(pair_id, device_pairs[pair_id]))
 
+def command_heartbeat(obj):
+    print("device {} checking in".format(obj["device_id"]))
 
 def quit_handler(signal, frame):
     print("Server terminating, goodbye")
@@ -37,9 +39,10 @@ while True:
         obj = json.loads(data.decode("ascii"))
         print(obj)
         command_switch = {
-            "id": command_id
+            "id": command_id,
+            "heartbeat": command_heartbeat
         }
-        func = command_switch.get(obj["command"], lambda: "Unknown command {}".format(obj["command"]))
+        func = command_switch.get(obj["command"], lambda: "Unknown command")
         func(obj)
     except json.JSONDecodeError:
         print("RX [{}] {}".format(datetime.utcnow().isoformat(), data))
