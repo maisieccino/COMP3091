@@ -1,4 +1,3 @@
-
 #include "contiki.h"
 #include "contiki-lib.h"
 #include "contiki-net.h"
@@ -14,6 +13,14 @@
 #define MAX_PAYLOAD_LEN		40
 #define UDP_CONNECTION_ADDR fe80:0:0:0:19:f5ff:fe89:1af0
 #define SERVER_PORT 9876
+
+#ifndef DEVICE_ID
+#define DEVICE_ID -1
+#endif
+
+#ifndef PAIR_ID
+#define PAIR_ID -1
+#endif
 
 static struct uip_udp_conn *client_conn;
 PROCESS(udp_client_process, "UDP client process");
@@ -33,11 +40,9 @@ static void tcpip_handler(void)
 static char buf[MAX_PAYLOAD_LEN];
 static void timeout_handler(void)
 {
-  static int seq_id;
-
   printf("Client sending to: ");
   PRINT6ADDR(&client_conn->ripaddr);
-  sprintf(buf, "Hello %d from the client", ++seq_id);
+  sprintf(buf, "{\"command\":\"id\",\"device_id\":%d,\"pair_id\":%d,\"type\":\"detector\"}", DEVICE_ID, PAIR_ID);
   printf(" (msg: %s)\n", buf);
 #if SEND_TOO_LARGE_PACKET_TO_TEST_FRAGMENTATION
   uip_udp_packet_send(client_conn, buf, UIP_APPDATA_SIZE);
