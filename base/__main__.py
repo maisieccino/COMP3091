@@ -18,6 +18,10 @@ def command_id(obj):
     pair_id = obj["pair_id"]
     device_id = obj["device_id"]
     print("device {} to be paired in pair {}".format(device_id, pair_id))
+    if not device_id in device_pairs:
+        device_pairs[pair_id] = {}
+    device_pairs[pair_id][obj["type"]] = device_id
+    print("device pair {}: now {}".format(pair_id, device_pairs[pair_id]))
 
 
 def quit_handler(signal, frame):
