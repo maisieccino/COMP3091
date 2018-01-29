@@ -1,4 +1,3 @@
-#define CI40_IP_ADDR "fe80::19:f5ff:fe89:1af0"
 
 #include "contiki.h"
 #include "contiki-lib.h"
@@ -13,12 +12,12 @@
 
 #define SEND_INTERVAL		15 * CLOCK_SECOND
 #define MAX_PAYLOAD_LEN		40
+#define UDP_CONNECTION_ADDR fe80:0:0:0:19:f5ff:fe89:1af0
+#define SERVER_PORT 9876
 
-static struct uip_udp_con *client_conn;
-
-PROCESS(main_procees, "IR Detection Process");
-AUTOSTART_PROCESSES(&main_process);
-
+static struct uip_udp_conn *client_conn;
+PROCESS(udp_client_process, "UDP client process");
+AUTOSTART_PROCESSES(&resolv_process,&udp_client_process);
 
 static void tcpip_handler(void)
 {
@@ -30,7 +29,7 @@ static void tcpip_handler(void)
     printf("Response from the server: '%s'\n", str);
   }
 }
-/*---------------------------------------------------------------------------*/
+
 static char buf[MAX_PAYLOAD_LEN];
 static void timeout_handler(void)
 {
@@ -46,7 +45,7 @@ static void timeout_handler(void)
   uip_udp_packet_send(client_conn, buf, strlen(buf));
 #endif /* SEND_TOO_LARGE_PACKET_TO_TEST_FRAGMENTATION */
 }
-/*---------------------------------------------------------------------------*/
+
 static void print_local_addresses(void)
 {
   int i;
@@ -62,7 +61,6 @@ static void print_local_addresses(void)
     }
   }
 }
-/*---------------------------------------------------------------------------*/
 #if UIP_CONF_ROUTER
 static void set_global_address(void)
 {
@@ -75,14 +73,15 @@ static void set_global_address(void)
 #endif /* UIP_CONF_ROUTER */
 
 
-static resolv_status_t set_connection_address(uip_ipaddr_t *ipaddr) {
+static resolv_status_t set_connection_address(uip_ipaddr_t *ipaddr)
+{
 #ifndef UDP_CONNECTION_ADDR
 #if RESOLV_CONF_SUPPORTS_MDNS
 #define UDP_CONNECTION_ADDR       contiki-udp-server.local
 #elif UIP_CONF_ROUTER
 #define UDP_CONNECTION_ADDR       aaaa:0:0:0:0212:7404:0004:0404
 #else
-#define UDP_CONNECTION_ADDR       fe80:0:0:0:6466:6666:6666:6666
+#define UDP_CONNECTION_ADDR       fe80:0:0:0:9:f5ff:fe89:1af0
 #endif
 #endif /* !UDP_CONNECTION_ADDR */
 
@@ -114,28 +113,37 @@ static resolv_status_t set_connection_address(uip_ipaddr_t *ipaddr) {
   return status;
 }
 
-PROCESS_THREAD(main_process, ev, data)
+PROCESS_THREAD(udp_client_process, ev, data)
 {
   static struct etimer et;
   uip_ipaddr_t ipaddr;
+
   PROCESS_BEGIN();
-  
+  PRINTF("UDP client process started\n");
+
+#if UIP_CONF_ROUTER
+  set_global_address();
+#endif
+
+  print_local_addresses();
+
   static resolv_status_t status = RESOLV_STATUS_UNCACHED;
-  while (status != RESOLV_STATUS_CACHED) {
+  while(status != RESOLV_STATUS_CACHED) {
     status = set_connection_address(&ipaddr);
 
-    if (status == RESOLV_STATUS_RESOLVING) {
+    if(status == RESOLV_STATUS_RESOLVING) {
       PROCESS_WAIT_EVENT_UNTIL(ev == resolv_event_found);
-    } else if (status != RESOLV_STATUS_CACHED) {
+    } else if(status != RESOLV_STATUS_CACHED) {
       PRINTF("Can't get connection address.\n");
       PROCESS_YIELD();
     }
   }
 
-  client_conn = udp_new(&ipaddr, UIP_HTONS(3000), NULL);
+  /* new connection with remote host */
+  client_conn = udp_new(&ipaddr, UIP_HTONS(SERVER_PORT), NULL);
   udp_bind(client_conn, UIP_HTONS(3001));
 
-  PRINTF("Created server connection.\n");
+  PRINTF("Created a connection with the server ");
   PRINT6ADDR(&client_conn->ripaddr);
   PRINTF(" local/remote port %u/%u\n",
 	UIP_HTONS(client_conn->lport), UIP_HTONS(client_conn->rport));
@@ -151,6 +159,5 @@ PROCESS_THREAD(main_process, ev, data)
     }
   }
 
-  
   PROCESS_END();
 }

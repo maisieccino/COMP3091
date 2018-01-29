@@ -18,5 +18,4 @@ signal.signal(signal.SIGINT, quit_handler)
 
 while True:
     data, addr_info = listen_sock.recvfrom(1024)
-    body = data.decode("ascii")
-    print("RX [{}] {}".format(datetime.utcnow().isoformat(), body))
+    print("RX [{}] {}".format(datetime.utcnow().isoformat(), data))

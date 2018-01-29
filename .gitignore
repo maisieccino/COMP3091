@@ -220,5 +220,14 @@ TSWLatexianTemp*
 # expex forward references with \gathertags
 *-tags.tex
 diff*
+
+# classify files
 classify/gold_standard_data.csv
 classify/all_images.csv
+
+# detect 
+detect/obj_mikro-e
+detect/symbols.*
+detect/contiki-mikro-e.*
+detect/detect.hex
+detect/detect.mikro-e
