@@ -42,49 +42,50 @@ PROCESS_THREAD(detect_main, ev, data)
   INIT_NETWORK_DEBUG();
   {
     static struct etimer et;
-    static struct uip_udp_conn *connection;
-    static char buf[BUFFER_SIZE];
+    // static struct uip_udp_conn *connection;
+    // static char buf[BUFFER_SIZE];
     PRINTF("Hello\n");
 
-    connection = udp_new_connection(CLIENT_PORT, SERVER_PORT, UDP_CONNECTION_ADDR);
-    motion_detected = false;
+    // connection = udp_new_connection(CLIENT_PORT, SERVER_PORT, UDP_CONNECTION_ADDR);
+    // motion_detected = false;
 
-    // wait a bit to try to give the UDP connection a chance... might work?
-    etimer_set(&et, CLOCK_SECOND * 20);
-    while (true) {
-      PROCESS_YIELD();
-      if (etimer_expired(&et)) {
-        // say hi!
-        sprintf(buf, "{\"pair_id\":%d,\"type\":\"detector\",\"device_id\":%d,\"command\":\"id\"}", PAIR_ID, DEVICE_ID);
-        udp_packet_send(connection, buf, strlen(buf));
-        PROCESS_WAIT_UDP_SENT();
-        break;
-      }
-    }
+    // // wait a bit to try to give the UDP connection a chance... might work?
+    // etimer_set(&et, CLOCK_SECOND * 20);
+    // while (true) {
+    //   PROCESS_YIELD();
+    //   if (etimer_expired(&et)) {
+    //     // say hi!
+    //     sprintf(buf, "{\"pair_id\":%d,\"type\":\"detector\",\"device_id\":%d,\"command\":\"id\"}", PAIR_ID, DEVICE_ID);
+    //     udp_packet_send(connection, buf, strlen(buf));
+    //     PROCESS_WAIT_UDP_SENT();
+    //     break;
+    //   }
+    // }
 
-    motion_click_enable(MIKROBUS_1);
-    motion_click_attach_callback(MIKROBUS_1, motion_callback);
+    // motion_click_enable(MIKROBUS_1);
+    // motion_click_attach_callback(MIKROBUS_1, motion_callback);
 
     etimer_set(&et, PROC_INTERVAL);
     while (true) {
       PROCESS_YIELD();
       if (motion_detected) {
-        sprintf(buf, "{\"device_id\":%d,\"command\":\"motion\"}", DEVICE_ID);
-        udp_packet_send(connection, buf, strlen(buf));
-        PROCESS_WAIT_UDP_SENT();
+        // sprintf(buf, "{\"device_id\":%d,\"command\":\"motion\"}", DEVICE_ID);
+        // udp_packet_send(connection, buf, strlen(buf));
+        // PROCESS_WAIT_UDP_SENT();
         motion_detected = false;
         continue;
       }
 
       if (etimer_expired(&et)) {
-        sprintf(buf, "{\"device_id\":%d,\"command\":\"heartbeat\"}", DEVICE_ID);
-        udp_packet_send(connection, buf, strlen(buf));
-        PROCESS_WAIT_UDP_SENT();
+        PRINTF("{\"device_id\":%d,\"command\":\"heartbeat\"}", DEVICE_ID);
+        // sprintf(buf, "{\"device_id\":%d,\"command\":\"heartbeat\"}", DEVICE_ID);
+        // udp_packet_send(connection, buf, strlen(buf));
+        // PROCESS_WAIT_UDP_SENT();
         etimer_restart(&et);
       }
     }
 
-    motion_click_disable(MIKROBUS_1);
+    // motion_click_disable(MIKROBUS_1);
   }
   PROCESS_END();
 }

@@ -13,6 +13,7 @@ $(call check_defined, DEVICE_ID, unique ID of the clicker)
 CFLAGS += -DPAIR_ID=$(PAIR_ID)
 CFLAGS += -DDEVICE_ID=$(DEVICE_ID)
 CFLAGS += -DDEBUG_IP=fe80::19:f5ff:fe89:1af0
+CFLAGS += -DDEBUG_NO_SERIAL
 CFLAGS += -Wall -Wno-pointer-sign
 CFLAGS += -I $(CONTIKI)/platform/$(TARGET)
 CFLAGS += -fno-short-double
