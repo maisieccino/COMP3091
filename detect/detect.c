@@ -30,7 +30,7 @@
 
 static bool motion_detected;
 
-void motion_callback(uint8_t event)
+static void motion_callback(uint8_t event)
 {
   motion_detected = true;
 }
@@ -56,32 +56,19 @@ PROCESS_THREAD(detect_main, ev, data)
     PROCESS_WAIT_TCP_CONNECTED();
     leds_on(LED1);
     leds_off(LED2);
-    // motion_detected = false;
+    motion_detected = false;
 
-    // // wait a bit to try to give the UDP connection a chance... might work?
-    // etimer_set(&et, CLOCK_SECOND * 20);
-    // while (true) {
-    //   PROCESS_YIELD();
-    //   if (etimer_expired(&et)) {
-    //     // say hi!
-    //     sprintf(buf, "{\"pair_id\":%d,\"type\":\"detector\",\"device_id\":%d,\"command\":\"id\"}", PAIR_ID, DEVICE_ID);
-    //     udp_packet_send(connection, buf, strlen(buf));
-    //     PROCESS_WAIT_UDP_SENT();
-    //     break;
-    //   }
-    // }
-
-    // motion_click_enable(MIKROBUS_1);
-    // motion_click_attach_callback(MIKROBUS_1, motion_callback);
+    motion_click_enable(MIKROBUS_1);
+    motion_click_attach_callback(MIKROBUS_1, motion_callback);
 
     etimer_set(&et, PROC_INTERVAL);
     while (true) {
       res = 0;
       PROCESS_YIELD();
       if (motion_detected) {
-        // sprintf(buf, "{\"device_id\":%d,\"command\":\"motion\"}", DEVICE_ID);
-        // udp_packet_send(connection, buf, strlen(buf));
-        // PROCESS_WAIT_UDP_SENT();
+        sprintf(buf, "{\"device_id\":%d,\"command\":\"motion\"}", DEVICE_ID);
+        tcp_packet_send(connection, buf, strlen(buf));
+        PROCESS_WAIT_TCP_SENT();
         motion_detected = false;
         continue;
       }
@@ -100,7 +87,7 @@ PROCESS_THREAD(detect_main, ev, data)
       }
     }
 
-    // motion_click_disable(MIKROBUS_1);
+    motion_click_disable(MIKROBUS_1);
   }
   PROCESS_END();
 }
