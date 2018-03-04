@@ -8,7 +8,7 @@ import sys
 from datetime import datetime
 import json
 
-listen_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+listen_sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 listen_sock.bind(("::", 9876))
 
 device_pairs = {}
@@ -23,8 +23,10 @@ def command_id(obj):
     device_pairs[pair_id][obj["type"]] = device_id
     print("device pair {}: now {}".format(pair_id, device_pairs[pair_id]))
 
+
 def command_heartbeat(obj):
     print("device {} checking in".format(obj["device_id"]))
+
 
 def quit_handler(signal, frame):
     print("Server terminating, goodbye")
@@ -33,18 +35,31 @@ def quit_handler(signal, frame):
 
 signal.signal(signal.SIGINT, quit_handler)
 
+listen_sock.listen(1)
+
 while True:
-    data, addr_info = listen_sock.recvfrom(1024)
+    print('Waiting for a connection...')
+    connection, client_address = sock.accept()
     try:
-        obj = json.loads(data.decode("ascii"))
-        print(obj)
-        command_switch = {
-            "id": command_id,
-            "heartbeat": command_heartbeat
-        }
-        func = command_switch.get(obj["command"], lambda: "Unknown command")
-        func(obj)
-    except json.JSONDecodeError:
-        print("RX [{}] {}".format(datetime.utcnow().isoformat(), data))
-
-
+        print("Connection from {}".format(client_address))
+        while True:
+            data, addr_info = connection.recv(1024)
+            try:
+                obj = json.loads(data.decode("ascii"))
+                print(obj)
+                command_switch = {
+                    "id": command_id,
+                    "heartbeat": command_heartbeat
+                }
+                func = command_switch.get(
+                    obj["command"], lambda: "Unknown command")
+                func(obj)
+            except json.JSONDecodeError:
+                print("RX [{}] {}".format(datetime.utcnow().isoformat(), data))
+        else:
+            print("No more data")
+            break
+    except ConnectionResetError:
+        print("Connection lost.")
+    finally:
+        connection.close()
