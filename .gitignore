@@ -231,3 +231,5 @@ detect/symbols.*
 detect/contiki-mikro-e.*
 detect/detect.hex
 detect/detect.mikro-e
+
+**/__pycache__
