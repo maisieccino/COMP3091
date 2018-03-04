@@ -18,5 +18,7 @@ while True:
         else:
             print("No more data")
             break
+    except ConnectionResetError:
+        print("Connection lost.")
     finally:
         connection.close()
