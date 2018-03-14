@@ -17,7 +17,7 @@ const uint8_t __CMD_SET_ROW_SIZE = 7;
 #define FRM_WIDTH   QCIF_WIDTH
 #define FRM_HEIGHT  QCIF_HEIGHT
 
-uint8_t bmp_header[10] = {0x00, 0x10, FRM_HEIGHT, FRM_HEIGHT>>8, FRM_WIDTH, FRM_WIDTH>>8, 0xFF, 0xFF, 0xFF, 0xFF}; // Header of BMP in QVGA format.
+uint8_t bmp_header[10] = {0x10, 0x00, FRM_HEIGHT >> 8, FRM_HEIGHT, FRM_WIDTH >> 8, FRM_WIDTH, 0xFF, 0xFF, 0xFF, 0xFF}; // Header of BMP in QVGA format.
 
 #ifndef MIKROBUS_IDX
 #define MIKROBUS_IDX MIKROBUS_1
@@ -35,7 +35,7 @@ int ready_pin_init()
     {
         ready_pin = MIKROBUS_2_INT;
     }
-    if (gpio_init(ready_pin) < 0 || gpio_set_direction(ready_pin, GPIO_INPUT))
+    if (gpio_init(ready_pin) < 0)
     {
         return -1;
     }
@@ -66,12 +66,18 @@ void send_command(uint8_t command)
     while (check_ready_pin() != 0)
     {
     }
-    spi_transfer(command, NULL, 1);
+    printf("send command\n");
+    int res = spi_transfer(&command, NULL, 1);
+    printf("result: %d\n", res);
 }
 
 void read_bytes(uint8_t *ptr, unsigned long num)
 {
+    while (check_ready_pin() != 0)
+    {
+    }
     uint8_t *zeros = (uint8_t *)calloc(1, num);
+    printf("reading %d bytes\n", num);
     spi_transfer(zeros, ptr, num);
 }
 
@@ -88,6 +94,7 @@ uint8_t *get_camera_data()
     }
     send_command(__CMD_GET_FRAME_BUFFERED);
     read_bytes(res + 10, FRM_WIDTH * FRM_HEIGHT * 2);
+    return res;
 }
 
 int main(void)
@@ -96,7 +103,7 @@ int main(void)
     printf("initialising spi...\n");
     spi_init();
     spi_select_bus(MIKROBUS_IDX);
-    spi_set_speed(MIKROBUS_IDX, 28000);
+    spi_set_speed(MIKROBUS_IDX, SPI_21M87);
     if (spi_set_mode(MIKROBUS_IDX, 3))
     {
         printf("Error setting SPI mode\n");
