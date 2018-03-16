@@ -12,10 +12,10 @@ const uint8_t __CMD_GET_FRAME_BUFFERED = 5;
 const uint8_t __CMD_SET_ROW_NUM = 6;
 const uint8_t __CMD_SET_ROW_SIZE = 7;
 
-#define QCIF_WIDTH  176
+#define QCIF_WIDTH 176
 #define QCIF_HEIGHT 144
-#define FRM_WIDTH   QCIF_WIDTH
-#define FRM_HEIGHT  QCIF_HEIGHT
+#define FRM_WIDTH QCIF_WIDTH
+#define FRM_HEIGHT QCIF_HEIGHT
 
 uint8_t bmp_header[10] = {0x10, 0x00, FRM_HEIGHT >> 8, FRM_HEIGHT, FRM_WIDTH >> 8, FRM_WIDTH, 0xFF, 0xFF, 0xFF, 0xFF}; // Header of BMP in QVGA format.
 
@@ -83,17 +83,19 @@ void read_bytes(uint8_t *ptr, unsigned long num)
 
 uint8_t *get_camera_data()
 {
-    uint8_t *res = (uint8_t *)calloc(1, 10 + (FRM_WIDTH * FRM_HEIGHT * 2));
+    uint8_t *res = (uint8_t *)calloc(1, FRM_WIDTH * FRM_HEIGHT * 2);
+    // uint8_t *res = (uint8_t *)calloc(1, 10 + (FRM_WIDTH * FRM_HEIGHT * 2));
     if (check_ready_pin() != 0)
     {
         return NULL;
     }
-    for (int i = 0; i < 10; i++)
-    {
-        res[i] = bmp_header[i];
-    }
-    send_command(__CMD_GET_FRAME_BUFFERED);
-    read_bytes(res + 10, FRM_WIDTH * FRM_HEIGHT * 2);
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     res[i] = bmp_header[i];
+    // }
+    send_command(__CMD_GET_FRAME);
+    // read_bytes(res + 10, FRM_WIDTH * FRM_HEIGHT * 2);
+    read_bytes(res, FRM_WIDTH * FRM_HEIGHT * 2);
     return res;
 }
 
