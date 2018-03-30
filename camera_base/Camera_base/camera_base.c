@@ -81,6 +81,23 @@ void read_bytes(uint8_t *ptr, unsigned long num)
     spi_transfer(zeros, ptr, num);
 }
 
+void send_bytes(uint8_t *ptr, uint8_t num) {
+    while (check_ready_pin() != 0)
+    {
+    }
+    spi_transfer(ptr, NULL, num);
+}
+
+uint8_t read_reg(uint8_t reg, uint8_t *val) {
+  uint8_t status;
+  
+  send_command(__CMD_READ_REG);
+  send_bytes(&reg, 1);
+  read_bytes(&status, 2);
+  *val = status & 0xFF;
+  return status >> 8;
+}
+
 uint8_t *get_camera_data()
 {
     uint8_t *res = (uint8_t *)calloc(1, FRM_WIDTH * FRM_HEIGHT * 2);
@@ -105,7 +122,7 @@ int main(void)
     printf("initialising spi...\n");
     spi_init();
     spi_select_bus(MIKROBUS_IDX);
-    spi_set_speed(MIKROBUS_IDX, SPI_21M87);
+    spi_set_speed(MIKROBUS_IDX, SPI_10M93);
     if (spi_set_mode(MIKROBUS_IDX, 3))
     {
         printf("Error setting SPI mode\n");
@@ -119,6 +136,10 @@ int main(void)
         return 1;
     }
 
+    printf("attempt to read reg... expecting %d\n", 0x7f);
+    uint8_t reg_val = 0;
+    read_reg(0x1d, &reg_val);
+    printf("...result: %d\n", reg_val);
     printf("Attempting to get camera image...\n");
     printf("god bless this mess.\n");
     uint8_t *res = get_camera_data();
