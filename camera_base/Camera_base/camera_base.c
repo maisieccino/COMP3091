@@ -20,7 +20,7 @@ const uint8_t __CMD_SET_ROW_SIZE = 7;
 uint8_t bmp_header[10] = {0x10, 0x00, FRM_HEIGHT >> 8, FRM_HEIGHT, FRM_WIDTH >> 8, FRM_WIDTH, 0xFF, 0xFF, 0xFF, 0xFF}; // Header of BMP in QVGA format.
 
 #ifndef MIKROBUS_IDX
-#define MIKROBUS_IDX MIKROBUS_1
+#define MIKROBUS_IDX MIKROBUS_2
 #endif
 
 int8_t ready_pin;
@@ -81,21 +81,23 @@ void read_bytes(uint8_t *ptr, unsigned long num)
     spi_transfer(zeros, ptr, num);
 }
 
-void send_bytes(uint8_t *ptr, uint8_t num) {
+void send_bytes(uint8_t *ptr, uint8_t num)
+{
     while (check_ready_pin() != 0)
     {
     }
     spi_transfer(ptr, NULL, num);
 }
 
-uint8_t read_reg(uint8_t reg, uint8_t *val) {
-  uint8_t status;
-  
-  send_command(__CMD_READ_REG);
-  send_bytes(&reg, 1);
-  read_bytes(&status, 2);
-  *val = status & 0xFF;
-  return status >> 8;
+uint8_t read_reg(uint8_t reg, uint8_t *val)
+{
+    uint8_t status;
+
+    send_command(__CMD_READ_REG);
+    send_bytes(&reg, 1);
+    read_bytes(&status, 2);
+    *val = status & 0xFF;
+    return status >> 8;
 }
 
 uint8_t *get_camera_data()

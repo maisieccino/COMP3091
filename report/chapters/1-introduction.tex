@@ -1,0 +1,64 @@
+
+\chapter{Introduction and background}
+
+\section{Motivation and need}
+Wildlife conservation experts constantly need to keep track of the location
+and movements of wildlife for a number of reasons, including monitoring
+species migration patterns and population
+counts~\cite{karanth1995estimating}. Other options exist, like line transect
+surveys (counting animals or traces of animals, like tracks and droppings) or
+track surveys (physically visiting the area and counting animals); but in the
+comparison study by Silveira et al~\parencite{silveira2003camera}, they found
+that camera traps, despite their longer initial setup time and cost, ``can be
+handled more easily and with relatively [lower] costs in a long term run''.
+
+Based on this, it would be logical to assume that running costs and analysis
+time could be reduced further by automating the classification of photos
+taken by camera traps and sending the results back to a cloud server. This
+would enable research teams to store, access, analyse and visualise wildlife
+counts with ease, using an \acrfull{api} provided by the web service.
+
+The biggest advantage of automating the classification stage of camera trap
+studies is that it would save a lot of time after the main study has ended,
+and results can be analysed as soon as possible.
+
+\section{Requirements}
+
+A list of requirements for the solution were reasonably easy to devise. Most
+of the requirements are defined by the limits of the environments where this
+system may be deployed, such as woodlands, grasslands, and national parks.
+
+Most of the locations where this solution could be deployed may have very
+limited cell network coverage, and definitely would not have WiFi
+connectivity available. Therefore, the system would have to use
+\gls{lorawan}, which has a theoretical range of up to twenty kilometres.
+However, the lower data rate of \gls{lorawan} means that photos captured by
+the camera traps would not be able to be sent back to a web server, so any
+kind of image processing and classification would have to be performed
+on-device.
+
+Another limitation is the devices being used for the project. The main ``base
+station'' device is the Creator Ci40 developer board, designed to ``allow
+developers to rapidly create connected products''~\cite{creatorci40}. This
+ability to rapidly prototype on the board, which has a \acrshort{mips}-based
+processor and runs the OpenWRT Linux distribution. It also contains a WiFi
+radio, useful for communicating with the device and debugging code on it
+during development, and a \gls{6lowpan} radio, useful for communicating with
+nearby devices.
+
+The sensor devices were also provided as part of the project. They consist of
+each sensor board integrated onto a \textit{MikroElektronika} \gls{6lowpan}
+clicker board~\cite{mikroeclick}. This board runs a \acrfull{rtos}, which
+allows the board to respond very quickly to changes in sensor input, as well
+as the ability to be battery powered and the inclusion of a \gls{6lowpan}
+radio, to communicate with the base station.
+
+Another requirement arising from the intended deployment scenario is that the
+system needs to be able to run on battery power, or indeed a low-voltage
+power source, for a considerable amount of time. The intention of the project
+is to reduce long-term study costs, and a need to replace sensor batteries
+regularly would be failing this. Consequently, the system would have to rely
+on hardware interrupts as much as possible, so that the devices can remain in
+a ``sleep mode'' when they are not needed.
+
+\section{Initial research and similar problems}

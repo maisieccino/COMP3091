@@ -1,6 +1,42 @@
-\documentclass{report}
+% arara: xelatex: { synctex: true, action: nonstopmode, options: "-halt-on-error" }
+% arara: biber
+% arara: biber
+% arara: makeglossaries
+% arara: xelatex: { synctex: true, action: nonstopmode, options: "-halt-on-error" }
+% arara: clean: { files: [ comp3091-mattbell.aux, comp3091-mattbell.bbl, comp3091-mattbell.bcf, comp3091-mattbell.blg, comp3091-mattbell.log, comp3091-mattbell.out, comp3091-mattbell.synctex.gz, comp3091-mattbell.run.xml ] }
+\documentclass[a4paper]{report}
+\usepackage[utf8]{inputenc}
 \usepackage{setspace}
 %\usepackage{subfigure}
+
+\usepackage[backend=biber]{biblatex}
+\addbibresource{report.bib}
+\usepackage{fontspec}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage[acronym,toc,section]{glossaries}
+\renewcommand*{\glsclearpage}{}
+\input{glossary}
+\input{acronym}
+\definecolor{colorDoc}{HTML}{333333}
+
+\newfontfamily\headingfont[]{Apercu}
+\setmonofont[Color=colorDoc]{Apercu Mono}
+% \setmainfont[Color=colorDoc]{Apercu}
+\titleformat
+{\chapter} % command
+[display] % shape
+{\bfseries\huge\headingfont} % format
+{\chaptername \ \thechapter} % label
+{0.5ex} % sep
+{
+  \Huge
+} % before-code
+\titleformat*{\section}{\LARGE\bfseries\headingfont}
+\titleformat*{\subsection}{\Large\bfseries\headingfont}
+\titleformat*{\subsubsection}{\large\bfseries\headingfont}
+\defbibheading{bibempty}{}
+% \renewcommand{\maketitlehooka}{\headingfont}
 
 \pagestyle{plain}
 \usepackage{amssymb,graphicx,color}
@@ -39,7 +75,7 @@ $\Box$ \end{quotation}}
 
 \title{{\vspace{-14em} \includegraphics[scale=0.4]{ucl_logo.png}}\\
 {{\Huge Tracking Wildlife Counts Using the Internet Of Things}}\\
-{\large Optional Subtitle}\\
+% {\large Optional Subtitle}\\
 }
 \date{Submission date: Day Month Year}
 \author{Matthew Bell\thanks{
@@ -47,13 +83,10 @@ $\Box$ \end{quotation}}
 This report is submitted as part requirement for the Computer Science Bsc at
 UCL. It is substantially the result of my own work except where explicitly
 indicated in the text.
-\emph{Either:} The report may be freely copied and distributed provided the source is explicitly acknowledged
-\newline  %% \\ messes it up
-\emph{Or:}\newline
-The report will be distributed to the internal and external examiners, but thereafter may not be copied or distributed except with permission from the author.}
+The report may be freely copied and distributed provided the source is explicitly acknowledged.}
 \\ \\
-Name of your degree\\ \\
-Supervisor's name}
+BSc Computer Science\\ \\
+Supervisor: Dr Kevin Bryson}
 
 
 
@@ -62,104 +95,28 @@ Supervisor's name}
 \onehalfspacing
 \maketitle
 \begin{abstract}
-Summarise your report concisely.
+  \input{abstract}
 \end{abstract}
 \tableofcontents
 \setcounter{page}{1}
 
+\include{chapters/1-introduction}
+\include{chapters/2-design}
+\include{chapters/3-implementation}
+\include{chapters/4-conclusion}
 
-\chapter{Title of first chapter}
-This is just a bare minimum to get started.  There is unlimited guidance on using latex, e.g., {\tt https://en.wikibooks.org/wiki/LaTeX}.   You are still responsible to check the detailed requirements of a project, including formatting instructions, see \\
-{\tt https://moodle.ucl.ac.uk/pluginfile.php/3591429/mod\_resource/content/7/UGProjects2017.pdf}.
-Leave at least a line of white space when you want to start a new paragraph.
+\nocite{*}
 
-\section{Section 1}
-Chapters should contain numbered sections and sub-sections.
-
-\subsection{Sub-Section 1}
-Remember that this is a structured technical/academic report, not an essay.
-
-\section{Mathematical Notation}
-Mathematical expressions are placed inline between dollar signs, e.g. $\sqrt 2, \sum_{i=0}^nf(i)$, or in display mode
-\[ e^{i\pi}=-1\] and another way, this time with labels,
-\begin{align}
-\label{line1} A=B\wedge B=C&\rightarrow A=C\\
-&\rightarrow C=A\\
-\intertext{note that}
-n!&=\prod_{1\leq i\leq n}i \\
-\int_{x=1}^y \frac 1 x \mathrm{d}x&=\log y
-\end{align}
-We can refer to labels like this \eqref{line1}.   
-
-\chapter{Title of second chapter}
-
-The main chapters should start with a brief summary -- this chapter is about, or introduces, some aspect of the work.
-
-\section{Main Content}
-Often lots of citations here (and elsewhere), e.g. \cite{Rey:D} or \cite[Theorem 2.3]{PriorNOP70}.   Bibtex can help with this, but is not essential. If you want pictures, try
-
-\begin{center}
-\includegraphics[scale=.5]{aristotle.jpg}
-\end{center}
-You can use 
-\begin{itemize}
-\item lists
-\item like this
-\end{itemize}
-or numbered
-\begin{enumerate}
-\item like this,
-\item or this
-\end{enumerate}
-but don't overdo it.
-
-\section{More Content}
-
-\section{Summary}
-The main chapters should have a short summary, highlighting what the chapter has covered and any key points that need emphasising.
-
-\chapter{Title of third chapter}
-If you have a formal theorem you might try this.
-\begin{definition}\label{def}
-See definition~\ref{def}.
-\end{definition}
-\begin{theorem}
-For all $n\in\nats,\; 1^n=1$.
-\end{theorem}
-\begin{proof}
-By induction over $n$.
-\end{proof}
-
-\chapter{etc.}
-
-
-\chapter{Conclusions}
-\section{Achievements}
-Summarise the achievements to confirm the project goals have been met.
-\section{Evaluation}
-Evaluation of the work (this may be in a separate chapter if there is substantial evaluation).
-
-\section{Future Work}
-How the project might be continued, but don't give the impression you ran out of time!
-
+\renewcommand{\chaptername}{Appendix}
 \appendix
 
+\chapter{Glossaries}
+\glossarystyle{listgroup}
+\printglossaries
 
-\begin{thebibliography}{HHM99}
+\chapter{Bibliography}
+\printbibliography[heading=bibempty]
 
-
-\bibitem[Pri70]{PriorNOP70}  %%only an example
-A.~Prior.
-\newblock The notion of the present.
-\newblock {\em Studium Generale}, 23:  245--248, 1970.
-
-
-\bibitem[Rey97]{Rey:D}
-M.~Reynolds.
-\newblock A decidable temporal logic of parallelism.
-\newblock {\em Notre Dame Journal of Formal Logic}, 38(3):  419--436,
-  1997.
-\end{thebibliography}
 \chapter{Other appendices, e.g., code listing}
 Put your appendix sections here
 
