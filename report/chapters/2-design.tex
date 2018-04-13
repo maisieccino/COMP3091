@@ -83,7 +83,9 @@ sensor interfaces~\cite{letmecreate}.
 
 Creator also provide a set of guides to help set up and write programs to the
 flash memory onboard the clicker device~\cite{clickersetupguide}, which have
-proven invaluable.
+proven invaluable. Code is written in a slightly modified version of the C
+programming language; the main difference being that all of the code runs in
+process threads that can be suspended, resumed and interrupted.
 
 \subsubsection{Communication}
 The remote sensors communicate with the base station using
@@ -110,8 +112,29 @@ device~\cite{motionclick} integrated onto the board using the ``MikroBUS''
 port. According to the product page~\cite{motionclick}, it has a range of up
 to four metres which is probably not sufficient for real world usage.
 However, for prototyping purposes, it's perfect because of the ease of
-integration, thanks to the aforementioned
-\textit{LetMeCreate} library~\cite{letmecreate}.
+integration, thanks to the aforementioned \textit{LetMeCreate}
+library~\cite{letmecreate}.
+
+The code runs in a continuous loop, that yields the main thread until it is
+resumed by an event interrupt. This event could be one of:
+
+\begin{itemize}
+  \item a timer expiring,
+  \item a \acrshort{tcp} event (received packets, lost connection, et cetera),
+  \item a motion detection event received from the motion sensor.\unsure{any
+  other events?}
+\end{itemize}
+
+For the prototype version of this sensor, the code sends a ``heartbeat''
+command to the base station every twenty seconds, for debugging purposes. But
+in a production version, the processor would only be be interrupted by
+\acrshort{tcp} events or by motion detection events, as this would result in
+fewer interrupts over time and thus reduce the power usage of the device. The
+development version of the program also makes use of a debug server running
+on the base station. The clicker board does not always have a serial
+output available, so printing to console (i.e., using the \texttt{printf()}
+function) does not work. Therefore, Contiki includes a \texttt{PRINTF} macro
+that sends the string to a server using \gls{6lowpan}, if available.
 
 \subsubsection{Camera Sensor}
 
