@@ -2,12 +2,117 @@
 
 \section{System Architecture}
 
+\begin{figure}[h]
+  \label{overviewfigure}
+  \centering
+  \includegraphics[width=\textwidth]{systemoverview}
+  \caption{System architecture overview, showing how the high-level components of the system are connected.}
+\end{figure}
+
+Figure~\ref{overviewfigure} shows the connections between the high-level
+components in the system, including the sensor deveices and the base
+stations, as well as the web server used to store and retrieve data.
+
 \subsection{Base Station}
 As previously mentioned in the requirements, the base station is a
-\textit{Creator Ci40 IoT Hub} device~\cite{creatorci40}.
+\textit{Creator Ci40 \acrshort{iot} Hub} device~\cite{creatorci40}. It's a
+development board that is highly specialised for rapidly building
+\acrlong{iot} applications, due to its abundance of sockets, pins and radios
+for \acrshort{io}.
 
-\subsection{Motion Detection Sensor}
+\subsubsection{Hardware Design Features}
 
-\subsection{Camera Sensor}
+The Ci40 board includes a \gls{6lowpan} radio, which is crucial in allow it
+to conduct two-way communication with nearby sensing devices at a reasonably
+high data rate. The main drawback is the range, which is typically a couple
+of tens of meters~\cite{culler20096lowpan}. However, this is perfect for
+communicating with the nearby sensor devices, which won't be too far away
+from the base station in the first place, and there is also the potential to
+use a mesh-style network, where communication might happen via one or more
+intermediary nodes. However, this would require sensor devices to be
+constantly active, thus preventing them from entering a lower power state and
+resulting in a much higher power usage.
 
-\subsection{Cloud Server}
+\subsubsection{Software Design}
+The base station provides a couple of very important tasks. Firstly, it acts
+as the main router, or coordinator, for nearby motion detector and camera
+pairs. It receives a motion alert from the motion sensor and sends a command
+to the related camera to capture an image. This program would also need to
+keep a list of sensor pairs, to ensure each command gets sent to the correct
+sensor.
+
+In addition to this, the base station runs a program to process incoming
+images from the camera sensors and calculates the count and species of any
+wildlife in the photo. Since this is an image recognition problem, it was
+decided that the best solution would be to use a convoluted neural network,
+trained on a dataset of similar images, to estimate to a reasonable accuracy
+the species of wildlife in the image. However, since the Ci40 board uses a
+32-bit processor architecture, it makes running neural networks a little more
+difficult, since most frameworks will only support 64-bit processors, as the
+larger word length results in larger computations being made possible.
+
+Finally, the base station needs to act as a \gls{lorawan} transmitter, to
+send the count data to an Internet-connected base station, which can then in
+turn upload the results to the web server. So, the base station is running
+three programs at the same time to deal with different tasks. All of the code
+that deals with the \gls{6lowpan} connection or \gls{lorawan} connection is
+written in either C or Python, and uses the \textit{LetMeCreate} library
+provided by the board manufacturer to increase ease of development.
+
+\subsection{Remote Sensors}
+
+The system also utilises a set of remote sensors that wirelessly connect with
+the base station using a \gls{6lowpan} connection. There's two kinds of
+sensors being used in the system, motion detector sensors and camera sensors.
+Both sensors use the same base board, a \textit{MikroElektronika}
+\gls{6lowpan} Click Board~\cite{mikroeclick}, with either a camera or motion
+detector attachment.
+
+\subsubsection{Hardware Design}
+
+\todo[inline]{Include image of 6LoWPAN clicker}
+The \textit{MikroElektronika} \gls{6lowpan} Click Board, as previously
+mentioned, runs a \acrfull{rtos} called \gls{contiki}. According to the
+\gls{contiki} project website~\cite{contiki}, it's ideal for low-power
+\acrshort{iot} projects since it supports the full \acrshort{ipv4} and
+\acrshort{ipv6} networking suites, as well a being able to run on ``tiny
+systems, only having a few kilobytes of memory available''. \textit{Creator},
+the manufacturers of the Ci40 base station, provide a toolchain for writing
+programs to the click board, as well as abstraction libraries for network and
+sensor interfaces~\cite{letmecreate}.
+
+Creator also provide a set of guides to help set up and write programs to the
+flash memory onboard the clicker device~\cite{clickersetupguide}, which have
+proven invaluable.
+
+\subsubsection{Communication}
+The remote sensors communicate with the base station using
+\acrshort{json}-encoded strings sent via \acrshort{tcp} over \gls{6lowpan}. A
+set of commands are defined and recognised by the sensors and the base
+station server alike, to allow messages to be sent that are both brief and
+human-readable, which is invaluable when debugging. The messages take a form similar to this:
+
+\begin{verbatim}
+  { "device_id": 1, "command": "heartbeat" }
+\end{verbatim}
+
+A unique \texttt{device\_id} is provided by every sensor to identify itself
+to the base station server, and on its first connection it will also provide
+a \texttt{pair\_id} which tells the server which unique camera/motion
+detector pair the device belongs to. Each of these are provided to the sensor
+program at compile time, using environment variables.~\improvement{Add list
+of commands?}
+
+\subsubsection{Motion Detector Sensor}
+The motion detector sensor uses the \gls{6lowpan} Click board described
+above, with a \textit{MikroElektronika} Motion Click
+device~\cite{motionclick} integrated onto the board using the ``MikroBUS''
+port. According to the product page~\cite{motionclick}, it has a range of up
+to four metres which is probably not sufficient for real world usage.
+However, for prototyping purposes, it's perfect because of the ease of
+integration, thanks to the aforementioned
+\textit{LetMeCreate} library~\cite{letmecreate}.
+
+\subsubsection{Camera Sensor}
+
+\subsection{Web Server}

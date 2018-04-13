@@ -7,18 +7,27 @@
 \documentclass[a4paper]{report}
 \usepackage[utf8]{inputenc}
 \usepackage{setspace}
+\usepackage{xargs}
 %\usepackage{subfigure}
 
 \usepackage[backend=biber]{biblatex}
 \addbibresource{report.bib}
 \usepackage{fontspec}
 \usepackage{titlesec}
-\usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
 \usepackage[acronym,toc,section]{glossaries}
 \renewcommand*{\glsclearpage}{}
 \input{glossary}
 \input{acronym}
 \definecolor{colorDoc}{HTML}{333333}
+
+% https://tex.stackexchange.com/a/178806
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
+\newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
 
 \newfontfamily\headingfont[]{Apercu}
 \setmonofont[Color=colorDoc]{Apercu Mono}
@@ -40,6 +49,7 @@
 
 \pagestyle{plain}
 \usepackage{amssymb,graphicx,color}
+\graphicspath{{images/}}
 \usepackage{amsfonts}
 \usepackage{latexsym}
 \usepackage{a4wide}
@@ -80,7 +90,7 @@ $\Box$ \end{quotation}}
 \date{Submission date: Day Month Year}
 \author{Matthew Bell\thanks{
 {\bf Disclaimer:}
-This report is submitted as part requirement for the Computer Science Bsc at
+This report is submitted as part requirement for the Computer Science BSc at
 UCL. It is substantially the result of my own work except where explicitly
 indicated in the text.
 The report may be freely copied and distributed provided the source is explicitly acknowledged.}
@@ -97,6 +107,9 @@ Supervisor: Dr Kevin Bryson}
 \begin{abstract}
   \input{abstract}
 \end{abstract}
+
+\listoftodos[To-Do (Delete Before Submission)]
+
 \tableofcontents
 \setcounter{page}{1}
 
