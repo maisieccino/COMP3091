@@ -1,0 +1,24 @@
+{
+  "name": "comp3091-srv",
+  "version": "1.0.0",
+  "description": "Server for animal classification and tracking IoT project",
+  "main": "index.js",
+  "repository": "https://github.com/mbellgb/comp3091",
+  "author": "Matthew Bell",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "koa": "^2.5.0",
+    "koa-router": "^7.4.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb": "16.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0",
+    "prettier": "^1.12.0"
+  }
+}

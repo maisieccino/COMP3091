@@ -233,3 +233,6 @@ detect/detect.hex
 detect/detect.mikro-e
 
 **/__pycache__
+
+srv/node_modules
+srv/yarn-error.log
