@@ -8,6 +8,7 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
+    "dotenv": "^5.0.1",
     "koa": "^2.5.0",
     "koa-router": "^7.4.0"
   },
