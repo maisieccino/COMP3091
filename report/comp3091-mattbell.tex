@@ -1,8 +1,8 @@
-% arara: xelatex: { synctex: true, action: nonstopmode, options: "-halt-on-error" }
+% arara: xelatex: { synctex: true, action: nonstopmode, options: "-halt-on-error -shell-escape" }
 % arara: biber
 % arara: biber
 % arara: makeglossaries
-% arara: xelatex: { synctex: true, action: nonstopmode, options: "-halt-on-error" }
+% arara: xelatex: { synctex: true, action: nonstopmode, options: "-halt-on-error -shell-escape" }
 % arara: clean: { files: [ comp3091-mattbell.aux, comp3091-mattbell.bbl, comp3091-mattbell.bcf, comp3091-mattbell.blg, comp3091-mattbell.log, comp3091-mattbell.out, comp3091-mattbell.synctex.gz, comp3091-mattbell.run.xml ] }
 \documentclass[a4paper]{report}
 \usepackage[utf8]{inputenc}
@@ -20,6 +20,9 @@
 \input{glossary}
 \input{acronym}
 \definecolor{colorDoc}{HTML}{333333}
+
+\usepackage{minted}
+\usemintedstyle{pastie}
 
 % https://tex.stackexchange.com/a/178806
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
@@ -114,10 +117,10 @@ Supervisor: Dr Kevin Bryson}
 \tableofcontents
 \setcounter{page}{1}
 
-\include{chapters/1-introduction}
-\include{chapters/2-design}
-\include{chapters/3-implementation}
-\include{chapters/4-conclusion}
+\include{chapters/introduction}
+\include{chapters/design}
+\include{chapters/implementation}
+\include{chapters/conclusion}
 
 \nocite{*}
 
@@ -131,8 +134,9 @@ Supervisor: Dr Kevin Bryson}
 \chapter{Bibliography}
 \printbibliography[heading=bibempty]
 
-\chapter{Other appendices, e.g., code listing}
-Put your appendix sections here
+\chapter{Code Listing}
+\section{detect/detect.c}
+\inputminted[linenos]{C}{../detect/detect.c}
 
 \end{document}
 
