@@ -7,7 +7,7 @@ exports.up = knex =>
     table.string("name");
     table.float("lat");
     table.float("lng");
-    table.dateTime("created");
+    table.timestamps();
   });
 
 exports.down = knex => knex.schema.dropTable("basestations");
