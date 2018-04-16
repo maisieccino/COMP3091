@@ -1,0 +1,43 @@
+{
+  "name": "comp3091",
+  "version": "1.0.0",
+  "description": "Animal classification and tracking IoT project",
+  "main": "index.js",
+  "repository": "https://github.com/mbellgb/comp3091",
+  "author": "Matthew Bell",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb": "16.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0",
+    "husky": "^0.14.3",
+    "jest": "^22.4.3",
+    "lint-staged": "^7.0.4",
+    "prettier": "^1.12.0"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js --ext .jsx --cache --ignore-path .eslintignore",
+    "lint:force": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore",
+    "lint:staged": "lint-staged",
+    "format": "prettier --write --trailing-comma all **/*.{js,jsx}",
+    "precommit": "yarn run lint:staged",
+    "test": "jest"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "prettier --write --trailing-comma all",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "@types/jest": "^22.1.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
