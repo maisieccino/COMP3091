@@ -1,0 +1,148 @@
+\chapter{API Specification}
+
+\section{Base Station}
+
+Endpoint: \texttt{/basestation/:id}
+
+\noindent
+This endpoint concerns the base stations registered on the system.\\
+
+\noindent
+\textbf{Optional Parameters}
+\begin{itemize}
+   \item \texttt{:id} \textemdash The id of the selected base station (not required for getting list of all base stations or adding new station).
+\end{itemize}
+
+
+\subsection{Get a list of all base stations}
+
+\noindent
+\textbf{Method}: \texttt{GET}
+
+\noindent
+\textbf{Request Format}: \texttt{<n/a>}
+
+\noindent
+\textbf{Response Content-Type}: \texttt{JSON}
+
+\noindent
+\textbf{Expected Status Code}: \texttt{200 OK}
+
+\noindent
+\textbf{Example Response}:
+\begin{minted}{json}
+  { 
+    "error": "",
+    "content": [
+      {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "name": "Test Station",
+        "lat": 0,
+        "lng": 0
+      }
+    ]
+  }
+\end{minted}
+
+
+\subsection{Add a new base station}
+
+\noindent
+\textbf{Method}: \texttt{POST}
+
+\noindent
+\textbf{Request Format}: \texttt{JSON}
+\begin{minted}{json}
+  { 
+    "name": "Test Station",
+    "lat": 0,
+    "lng": 0,
+  }
+\end{minted}
+
+\noindent
+\textbf{Required Fields}: \texttt{<none>}
+
+\noindent
+\textbf{Response Content-Type}: \texttt{JSON}
+
+\noindent
+\textbf{Expected Status Code}: \texttt{201 Created}
+
+\noindent
+\textbf{Example Response}:
+\begin{minted}{json}
+  { 
+    "error": "",
+    "content": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Test Station",
+      "lat": 0,
+      "lng": 0
+    }
+  }
+\end{minted}
+
+
+\subsection{Modify an existing base station}
+
+\noindent
+\textbf{Method}: \texttt{PATCH}
+
+\noindent
+\textbf{Request Format}: \texttt{JSON}
+\begin{minted}{json}
+  { 
+    "name": "Test Station",
+    "lat": 0,
+    "lng": 0,
+  }
+\end{minted}
+
+\noindent
+\textbf{Required Fields}: \texttt{<none>}
+
+\noindent
+\textbf{Response Content-Type}: \texttt{JSON}
+
+\noindent
+\textbf{Expected Status Code}: \texttt{200 OK}
+
+\noindent
+\textbf{Example Response}:
+\begin{minted}{json}
+  { 
+    "error": "",
+    "content": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Test Station",
+      "lat": 0,
+      "lng": 0
+    }
+  }
+\end{minted}
+
+
+\subsection{Delete an existing base station}
+
+\noindent
+\textbf{Method}: \texttt{DELETE}
+
+\noindent
+\textbf{Request Format}: \texttt{<n/a>}
+
+\noindent
+\textbf{Required Fields}: \texttt{<none>}
+
+\noindent
+\textbf{Response Content-Type}: \texttt{<none>}
+
+\noindent
+\textbf{Expected Status Code}: \texttt{204 No Content}
+
+\section{Base Station Sensor Pairs}
+
+Endpoint: \texttt{/basestation/:id/sensorpairs}
+
+\noindent
+This endpoint concerns the sensor pairs connected to a base station.\\
