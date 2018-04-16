@@ -9,8 +9,12 @@
   "private": false,
   "dependencies": {
     "dotenv": "^5.0.1",
+    "knex": "^0.14.6",
     "koa": "^2.5.0",
-    "koa-router": "^7.4.0"
+    "koa-router": "^7.4.0",
+    "objection": "^1.1.6",
+    "sqlite3": "^4.0.0",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",

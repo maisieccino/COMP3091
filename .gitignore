@@ -240,3 +240,4 @@ srv/node_modules
 srv/yarn-error.log
 .eslintcache
 
+srv/dev.sqlite3
