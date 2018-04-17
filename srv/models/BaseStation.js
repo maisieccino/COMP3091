@@ -33,6 +33,12 @@ module.exports = class BaseStation extends Model {
   }
 
   async $beforeInsert() {
+    this.created_at = new Date().toISOString();
+    this.updated_at = this.created_at;
     this.id = uuid.v4();
+  }
+
+  $beforeUpdate() {
+    this.updated_at = new Date().toISOString();
   }
 };

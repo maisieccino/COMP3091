@@ -1,21 +1,54 @@
 const Koa = require("koa");
 const { ValidationError } = require("objection");
 const Router = require("koa-router");
-const BaseStation = require("./models/BaseStation");
+const { BaseStation } = require("./models");
 
 const app = new Koa();
 
 const router = new Router();
 
-const getBaseStation = id => BaseStation.query().findById(id);
-
-router.get("/:id", async ctx => {
+/**
+ * Middleware that fetches a base station using the id parameter found in the url
+ * @param {Koa.context} ctx The current app context
+ * @param {Function} next Next function in middleware chain
+ */
+const getBaseStation = async (ctx, next) => {
   const { id } = ctx.params;
-  const baseStation = await getBaseStation(id);
+  const baseStation = await BaseStation.query().findById(id);
   if (!baseStation) {
-    ctx.throw("Base station not found with that id", 404);
+    ctx.throw("No base station found with that id", 404);
   }
-  ctx.body = baseStation.toJSON();
+  ctx.state.baseStation = baseStation;
+  await next();
+};
+
+router.get("/:id/sensorpairs", getBaseStation, async ctx => {
+  ctx.body = await ctx.state.baseStation.$relatedQuery("sensorPairs");
+});
+
+router.post("/:id/sensorpairs", getBaseStation, async ctx => {
+  try {
+    const sensorPair = await ctx.state.baseStation
+      .$relatedQuery("sensorPairs")
+      .insert(ctx.request.body);
+    ctx.status = 201;
+    ctx.body = sensorPair;
+  } catch (err) {
+    ctx.body = {};
+    if (err instanceof ValidationError) {
+      ctx.throw(
+        typeof err.message === "object"
+          ? JSON.stringify(err.message)
+          : err.message,
+        400,
+      );
+    }
+    ctx.throw(err.message, 500);
+  }
+});
+
+router.get("/:id", getBaseStation, async ctx => {
+  ctx.body = ctx.state.baseStation.toJSON();
 });
 
 router.patch("/:id", async ctx => {
@@ -34,7 +67,6 @@ router.delete("/:id", async ctx => {
     ctx.throw("base station not found with that id", 404);
   }
   ctx.status = 204;
-  ctx.body = "";
 });
 
 router.get("/", async ctx => {

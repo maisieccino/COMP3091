@@ -9,6 +9,7 @@ module.exports = class SensorPair extends Model {
   static get jsonSchema() {
     return {
       type: "object",
+      required: ["camera_id", "motion_id"],
       properties: {
         id: { type: "string", format: "uuid" },
         lat: { type: "number", default: 0 },
@@ -35,6 +36,12 @@ module.exports = class SensorPair extends Model {
   }
 
   async $beforeInsert() {
+    this.created_at = new Date().toISOString();
+    this.updated_at = this.created_at;
     this.id = uuid.v4();
+  }
+
+  $beforeUpdate() {
+    this.updated_at = new Date().toISOString();
   }
 };

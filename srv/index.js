@@ -7,8 +7,6 @@ const bodyParser = require("koa-bodyparser");
 
 const knexConfig = require("./knexfile");
 
-const baseStation = require("./baseStation");
-
 require("dotenv").config();
 
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
@@ -20,10 +18,19 @@ const app = new Koa();
 app.use(logger());
 app.use(bodyParser());
 
+// adds ability to pretty-print output if requested, using the
+// `prettyprint` query parameter
+app.use(async (ctx, next) => {
+  await next();
+  if (ctx.status !== 204 && ctx.query.prettyprint === "true") {
+    ctx.body = JSON.stringify(ctx.body, "\n", 2);
+  }
+});
+
 app.use(async (ctx, next) => {
   await next();
   if (ctx.status === 204) {
-    ctx.body = "";
+    ctx.body = null;
   } else {
     ctx.body = { error: ctx.error, content: ctx.body };
   }
@@ -39,10 +46,11 @@ app.use(async (ctx, next) => {
 });
 
 // apps
-app.use(mount("/basestation", baseStation));
+app.use(mount("/basestation", require("./baseStation")));
+app.use(mount("/sensorpair", require("./sensorPair")));
 
 app.use(async ctx => {
-  ctx.status = 404;
+  ctx.throw("URL not found", 404);
 });
 
 app.listen(process.env.PORT || 3000, () => {
