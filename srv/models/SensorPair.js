@@ -23,6 +23,7 @@ module.exports = class SensorPair extends Model {
 
   static get relationMappings() {
     const BaseStation = require("./BaseStation");
+    const Reading = require("./Reading");
     return {
       baseStation: {
         relation: Model.BelongsToOneRelation,
@@ -30,6 +31,14 @@ module.exports = class SensorPair extends Model {
         join: {
           from: "sensorpairs.basestation_id",
           to: "basestations.id",
+        },
+      },
+      readings: {
+        relation: Model.HasManyRelation,
+        modelClass: Reading,
+        join: {
+          from: "sensorpairs.id",
+          to: "readings.sensorpair_id",
         },
       },
     };

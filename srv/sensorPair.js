@@ -1,5 +1,6 @@
 const Koa = require("koa");
 const Router = require("koa-router");
+const { ValidationError } = require("objection");
 const { SensorPair } = require("./models");
 
 const app = new Koa();
@@ -20,6 +21,35 @@ const getSensorPair = async (ctx, next) => {
   ctx.state.sensorPair = sensorPair;
   await next();
 };
+
+router.get("/:pairid/reading/", getSensorPair, async ctx => {
+  ctx.body = await ctx.state.sensorPair.$relatedQuery("readings");
+});
+
+router.post("/:pairid/reading/", getSensorPair, async ctx => {
+  ctx.assert(
+    ctx.request.body instanceof Array,
+    400,
+    "You must send readings as an array",
+  );
+  try {
+    ctx.body = await ctx.state.sensorPair
+      .$relatedQuery("readings")
+      .insert(ctx.request.body);
+    ctx.status = 201;
+  } catch (err) {
+    ctx.body = {};
+    if (err instanceof ValidationError) {
+      ctx.throw(
+        typeof err.message === "object"
+          ? JSON.stringify(err.message)
+          : err.message,
+        400,
+      );
+    }
+    ctx.throw(err.message, 500);
+  }
+});
 
 router.get("/:pairid", getSensorPair, async ctx => {
   ctx.body = ctx.state.sensorPair.toJSON();
