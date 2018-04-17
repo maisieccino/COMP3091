@@ -31,17 +31,17 @@ This endpoint concerns the base stations registered on the system.\\
 \noindent
 \textbf{Example Response}:
 \begin{minted}{json}
-  { 
-    "error": "",
-    "content": [
-      {
-        "id": "00000000-0000-0000-0000-000000000000",
-        "name": "Test Station",
-        "lat": 0,
-        "lng": 0
-      }
-    ]
-  }
+{ 
+  "error": "",
+  "content": [
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Test Station",
+      "lat": 0,
+      "lng": 0
+    }
+  ]
+}
 \end{minted}
 
 
@@ -53,11 +53,11 @@ This endpoint concerns the base stations registered on the system.\\
 \noindent
 \textbf{Request Format}: \texttt{JSON}
 \begin{minted}{json}
-  { 
-    "name": "Test Station",
-    "lat": 0,
-    "lng": 0,
-  }
+{ 
+  "name": "Test Station",
+  "lat": 0,
+  "lng": 0,
+}
 \end{minted}
 
 \noindent
@@ -72,15 +72,15 @@ This endpoint concerns the base stations registered on the system.\\
 \noindent
 \textbf{Example Response}:
 \begin{minted}{json}
-  { 
-    "error": "",
-    "content": {
-      "id": "00000000-0000-0000-0000-000000000000",
-      "name": "Test Station",
-      "lat": 0,
-      "lng": 0
-    }
+{ 
+  "error": "",
+  "content": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Test Station",
+    "lat": 0,
+    "lng": 0
   }
+}
 \end{minted}
 
 
@@ -92,11 +92,11 @@ This endpoint concerns the base stations registered on the system.\\
 \noindent
 \textbf{Request Format}: \texttt{JSON}
 \begin{minted}{json}
-  { 
-    "name": "Test Station",
-    "lat": 0,
-    "lng": 0,
-  }
+{ 
+  "name": "Test Station",
+  "lat": 0,
+  "lng": 0,
+}
 \end{minted}
 
 \noindent
@@ -111,15 +111,15 @@ This endpoint concerns the base stations registered on the system.\\
 \noindent
 \textbf{Example Response}:
 \begin{minted}{json}
-  { 
-    "error": "",
-    "content": {
-      "id": "00000000-0000-0000-0000-000000000000",
-      "name": "Test Station",
-      "lat": 0,
-      "lng": 0
-    }
+{ 
+  "error": "",
+  "content": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Test Station",
+    "lat": 0,
+    "lng": 0
   }
+}
 \end{minted}
 
 
@@ -140,9 +140,304 @@ This endpoint concerns the base stations registered on the system.\\
 \noindent
 \textbf{Expected Status Code}: \texttt{204 No Content}
 
+
+
 \section{Base Station Sensor Pairs}
 
 Endpoint: \texttt{/basestation/:id/sensorpairs}
 
 \noindent
 This endpoint concerns the sensor pairs connected to a base station.\\
+
+
+\subsection{Get a list of a base station's sensor pairs}
+
+\noindent
+\textbf{Method}: \texttt{GET}
+
+\noindent
+\textbf{Request Format}: \texttt{<n/a>}
+
+\noindent
+\textbf{Response Content-Type}: \texttt{JSON}
+
+\noindent
+\textbf{Expected Status Code}: \texttt{200 OK}
+
+\noindent
+\textbf{Example Response}:
+\begin{minted}{json}
+{ 
+  "error": "",
+  "content": [
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Treetop Sensor",
+      "lat": 0,
+      "lng": 0,
+      "camera_id": 234,
+      "motion_id": 120
+    }
+  ]
+}
+\end{minted}
+
+
+\subsection{Add a new sensor pair to a base station}
+
+\noindent
+\textbf{Method}: \texttt{POST}
+
+\noindent
+\textbf{Request Format}: \texttt{JSON}
+\begin{minted}{json}
+{ 
+  "name": "Treetop Sensor",
+  "lat": 0,
+  "lng": 0,
+  "camera_id": 123,
+  "motion_id": 456
+}
+\end{minted}
+
+\noindent
+\textbf{Required Fields}: \texttt{camera\_id, motion\_id}
+
+\noindent
+\textbf{Response Content-Type}: \texttt{JSON}
+
+\noindent
+\textbf{Expected Status Code}: \texttt{201 Created}
+
+\noindent
+\textbf{Example Response}:
+\begin{minted}{json}
+{ 
+  "error": "",
+  "content": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Treetop Sensor",
+    "lat": 0,
+    "lng": 0,
+    "camera_id": 123,
+    "motion_id": 456
+  }
+}
+\end{minted}
+
+
+
+\section{Sensor Pair}
+
+Endpoint: \texttt{/sensorpair/:id}
+
+\noindent
+This endpoint concerns all sensor pairs registered on the system.\\
+
+\noindent
+\textbf{Optional Parameters}
+\begin{itemize}
+   \item \texttt{:id} \textemdash The id of the selected sensor pair (not required for getting list of all sensor pairs or adding new pair).
+\end{itemize}
+
+
+\subsection{Get a list of all sensor pairs}
+
+\noindent
+\textbf{Method}: \texttt{GET}
+
+\noindent
+\textbf{Request Format}: \texttt{<n/a>}
+
+\noindent
+\textbf{Response Content-Type}: \texttt{JSON}
+
+\noindent
+\textbf{Expected Status Code}: \texttt{200 OK}
+
+\noindent
+\textbf{Example Response}:
+\begin{minted}{json}
+{ 
+  "error": "",
+  "content": [
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Treetop Sensor",
+      "lat": 0,
+      "lng": 0,
+      "camera_id": 123,
+      "motion_id": 456
+    }
+  ]
+}
+\end{minted}
+
+
+\subsection{Modify an existing sensor pair}
+
+\noindent
+\textbf{Method}: \texttt{PATCH}
+
+\noindent
+\textbf{Request Format}: \texttt{JSON}
+\begin{minted}{json}
+{ 
+  "name": "Treetop Sensor",
+  "lat": 0,
+  "lng": 0,
+}
+\end{minted}
+
+\noindent
+\textbf{Required Fields}: \texttt{<none>}
+
+\noindent
+\textbf{Response Content-Type}: \texttt{JSON}
+
+\noindent
+\textbf{Expected Status Code}: \texttt{200 OK}
+
+\noindent
+\textbf{Example Response}:
+\begin{minted}{json}
+{ 
+  "error": "",
+  "content": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Treetop Sensor",
+    "lat": 0,
+    "lng": 0,
+    "camera_id": 123,
+    "motion_id": 456
+  }
+}
+\end{minted}
+
+
+\subsection{Delete an existing sensor pair}
+
+\noindent
+\textbf{Method}: \texttt{DELETE}
+
+\noindent
+\textbf{Request Format}: \texttt{<n/a>}
+
+\noindent
+\textbf{Required Fields}: \texttt{<none>}
+
+\noindent
+\textbf{Response Content-Type}: \texttt{<none>}
+
+\noindent
+\textbf{Expected Status Code}: \texttt{204 No Content}
+
+
+
+\section{Sensor Pair Reading}
+
+Endpoint: \texttt{/sensorpair/:pairid/reading/:readingid}
+
+\noindent
+This endpoint concerns the base stations registered on the system.\\
+
+\noindent
+\textbf{Required Parameters}
+\begin{itemize}
+   \item \texttt{:pairid} \textemdash The id of the selected sensor pair.
+\end{itemize}
+
+\noindent
+\textbf{Optional Parameters}
+\begin{itemize}
+   \item \texttt{:readingid} \textemdash The id of the selected reading (not
+   required for getting list of all readings or adding new reading).
+\end{itemize}
+
+
+\subsection{Get a list of all readings for a sensor}
+
+\noindent
+\textbf{Method}: \texttt{GET}
+
+\noindent
+\textbf{Request Format}: \texttt{<n/a>}
+
+\noindent
+\textbf{Response Content-Type}: \texttt{JSON}
+
+\noindent
+\textbf{Expected Status Code}: \texttt{200 OK}
+
+\noindent
+\textbf{Example Response}:
+\begin{minted}{json}
+{ 
+  "error": "",
+  "content": [
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "t": "2018-01-01T12:00:00+00:00",
+      "counts": [
+        {
+          "species_id": 12,
+          "name": "Blackbird",
+          "count": 1
+        }
+      ]
+    }
+  ]
+}
+\end{minted}
+
+
+\subsection{Add one or more readings to a sensor pair}
+
+\noindent
+\textbf{Method}: \texttt{POST}
+
+\noindent
+\textbf{Request Format}: \texttt{JSON}
+\begin{minted}{json}
+[
+  { 
+    "t": "2018-01-01T12:00:00+00:00",
+    "counts": [
+      {
+        "species_id": 12,
+        "count": 1
+      }
+    ]
+  }
+]
+\end{minted}
+
+\noindent
+\textbf{Required Fields}: \texttt{t, counts}
+
+\noindent
+\textbf{Response Content-Type}: \texttt{JSON}
+
+\noindent
+\textbf{Expected Status Code}: \texttt{201 Created}
+
+\noindent
+\textbf{Example Response}:
+\begin{minted}{json}
+{ 
+  "error": "",
+  "content": [
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "t": "2018-01-01T12:00:00+00:00",
+      "counts": [
+        {
+          "species_id": 12,
+          "name": "Blackbird",
+          "count": 1
+        }
+      ]
+    }
+  ]
+}
+\end{minted}
