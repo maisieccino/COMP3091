@@ -1,3 +1,4 @@
+/* eslint no-param-reassign: 0 */
 const { Model } = require("objection");
 const uuid = require("uuid");
 
@@ -40,5 +41,10 @@ module.exports = class BaseStation extends Model {
 
   $beforeUpdate() {
     this.updated_at = new Date().toISOString();
+  }
+
+  $beforeValidate(jsonSchema, json) {
+    json.id = this.id;
+    return jsonSchema;
   }
 };

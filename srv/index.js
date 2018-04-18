@@ -10,7 +10,11 @@ const knexConfig = require("./knexfile");
 require("dotenv").config();
 
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
-const knex = Knex(knexConfig[process.env.NODE_ENV]);
+
+const knex =
+  process.env.NODE_ENV === "test"
+    ? require("./test/db")
+    : Knex(knexConfig[process.env.NODE_ENV]); // eslint-disable-line import/newline-after-import
 objection.Model.knex(knex);
 
 const app = new Koa();
@@ -53,8 +57,10 @@ app.use(async ctx => {
   ctx.throw("URL not found", 404);
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server is listening.");
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(process.env.PORT || 3000, () => {
+    console.log("Server is listening.");
+  });
+}
 
 module.exports = app;
