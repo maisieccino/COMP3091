@@ -1,3 +1,6 @@
+/* eslint-disable class-methods-use-this */
+const { ValidationError } = require("objection");
+
 const { Model } = require("objection");
 const uuid = require("uuid");
 
@@ -11,7 +14,7 @@ module.exports = class SensorPair extends Model {
       type: "object",
       required: ["camera_id", "motion_id"],
       properties: {
-        id: { type: "string", format: "uuid" },
+        id: { type: "string", format: "uuid", readOnly: true },
         lat: { type: "number", default: 0 },
         lng: { type: "number", default: 0 },
         name: { type: "string" },
@@ -52,5 +55,13 @@ module.exports = class SensorPair extends Model {
 
   $beforeUpdate() {
     this.updated_at = new Date().toISOString();
+  }
+
+  $beforeValidate(jsonSchema, json) {
+    // both coords set, or none. no inbetween!
+    if ((json.lat && !json.lng) || (json.lng && !json.lat)) {
+      throw new ValidationError({ statusCode: 400, type: "ModelValidation" });
+    }
+    return jsonSchema;
   }
 };

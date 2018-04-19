@@ -1,6 +1,6 @@
 const BaseStation = require("./BaseStation");
 const { ValidationError } = require("objection");
-const testId = "00000000-0000-0000-0000-000000000000";
+const { isUUID } = require("validator");
 
 describe("create new base station", () => {
   test("creates a new base station without any parameters", () => {
@@ -9,6 +9,7 @@ describe("create new base station", () => {
   });
 
   test("can't set id manually", () => {
+    const testId = "00000000-0000-0000-0000-000000000000";
     const baseStation = BaseStation.fromJson({
       id: testId,
     });
@@ -34,5 +35,11 @@ describe("create new base station", () => {
         lat: "hello",
       });
     }).toThrowError(ValidationError);
+  });
+
+  test("sets uuid when inserting into db", async () => {
+    const baseStation = BaseStation.fromJson({});
+    await baseStation.$beforeInsert();
+    expect(isUUID(baseStation.id)).toBe(true);
   });
 });
