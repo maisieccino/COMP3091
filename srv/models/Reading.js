@@ -1,5 +1,10 @@
+const { ValidationError } = require("objection");
+
+/* eslint class-methods-use-this: 0 */
+/* eslint no-param-reassign: 0 */
+const moment = require("moment");
 const { Model } = require("objection");
-const { v4: uuid } = require("uuid");
+const uuid = require("uuid");
 
 module.exports = class Reading extends Model {
   static get tableName() {
@@ -24,9 +29,11 @@ module.exports = class Reading extends Model {
             properties: {
               species_id: {
                 type: "integer",
+                minimum: 0,
               },
               count: {
                 type: "integer",
+                minimum: 0,
               },
             },
           },
@@ -47,6 +54,55 @@ module.exports = class Reading extends Model {
         },
       },
     };
+  }
+
+  $beforeValidate(jsonSchema, json) {
+    if (json.t) {
+      try {
+        const newDate = moment(json.t).toISOString();
+        if (!newDate) {
+          throw new Error("invalid date");
+        }
+        json.t = newDate;
+      } catch (err) {
+        throw Model.createValidationError({
+          type: "ModelValidation",
+          message: "t must be a properly-formatted date",
+          data: {
+            t: [
+              {
+                keyword: "format",
+                message: "must be a properly-formatted time string",
+              },
+            ],
+          },
+        });
+      }
+    }
+
+    return super.$beforeValidate(jsonSchema, json);
+  }
+
+  $afterValidate(json, opt) {
+    json.counts = json.counts.filter(el => el.count > 0);
+
+    // check for duplicate species_ids
+    const ids = json.counts.map(el => el.species_id);
+    if (new Set(ids).size !== ids.length) {
+      throw Model.createValidationError({
+        type: "modelValidation",
+        message: "each `counts` item must have a unique species_id",
+        data: {
+          counts: [
+            {
+              keyword: "format",
+              message: "each item must have a unique species_id",
+            },
+          ],
+        },
+      });
+    }
+    return super.$afterValidate(json, opt);
   }
 
   async $beforeInsert() {

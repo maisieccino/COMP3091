@@ -53,11 +53,28 @@ router.get("/:id", getBaseStation, async ctx => {
 
 router.patch("/:id", async ctx => {
   const { id } = ctx.params;
-  const baseStation = await BaseStation.query().patchAndFetchById(
-    id,
-    ctx.request.body,
-  );
-  ctx.body = baseStation.toJSON();
+  let baseStation;
+  try {
+    baseStation = await BaseStation.query().patchAndFetchById(
+      id,
+      ctx.request.body,
+    );
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      ctx.throw(
+        typeof err.message === "object"
+          ? JSON.stringify(err.message)
+          : err.message,
+        400,
+      );
+    }
+    ctx.throw(err.message, 500);
+  }
+  if (!baseStation) {
+    ctx.throw("base station not found with this id", 404);
+  } else {
+    ctx.body = baseStation.toJSON();
+  }
 });
 
 router.delete("/:id", async ctx => {

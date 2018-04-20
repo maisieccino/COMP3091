@@ -241,3 +241,4 @@ srv/yarn-error.log
 .eslintcache
 
 srv/dev.sqlite3
+srv/coverage

@@ -26,7 +26,7 @@
     "lint:force": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore",
     "lint:staged": "lint-staged",
     "format": "prettier --write --trailing-comma all **/*.{js,jsx}",
-    "precommit": "yarn run test && yarn run lint:staged",
+    "precommit": "yarn run test --forceExit && yarn run lint:staged",
     "test": "jest"
   },
   "lint-staged": {
