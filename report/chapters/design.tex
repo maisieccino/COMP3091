@@ -184,4 +184,33 @@ solid foundation for any further documentation, for instance documentation
 that third parties use to build on top of the \acrshort{api}.
 
 The first stage in building the \acrshort{api} is to model how the data is to
-be represented.
+be represented. This is achieved in three stages:
+
+\begin{enumerate}
+  \item Work out what entities are to be represented with the API. For this
+  project, this ended up being: the base stations, the associated sensor
+  pairs, and the readings obtained from the sensor pairs. The web server
+  doesn't need to concern itself with how the pairs connect to the base
+  stations and to each other, so it is easier to model each motion sensor and
+  camera sensor as a single pair.
+  \item Construct an entity-relationship diagram, to represent how each of
+  the entities listed interact with each other. This also introduces the
+  notion of multiplicity; for instance, how many base stations does a sensor
+  pair interact with?~\todo{include E-R diagram (and ref here)}
+  \item For each entity, deciding what data needs to be stored and accessible
+  from the \acrshort{api}. As mentioned earlier, a lot of data is actually
+  excluded here since it is only relevant at a lower level. An example of
+  data that is deliberately excluded is sensor \acrshort{ipv6} addresses,
+  since they're only required by the base station for communication. This is
+  also when it would be decided what data is necessary and \textbf{must} be
+  included for each instance of the entity, and what data is optional.
+  Human-readable names are a good example of this.
+\end{enumerate}
+
+From this initial requirements gathering, it is then possible to create an
+\acrshort{api} specification, detailing how the \acrshort{api} should react
+to certain input. It should be highly detailed, included specifying the
+\acrshort{http} response code that would be received under normal conditions.
+
+The entire \acrshort{api} specification is included in
+Appendix~\ref{app:apispec} for the reader's perusal.
