@@ -44,6 +44,7 @@ app.use(async (ctx, next) => {
   try {
     await next();
   } catch (err) {
+    ctx.body = undefined;
     ctx.error = err.message || "An error occured";
     ctx.status = err.status || 500;
   }

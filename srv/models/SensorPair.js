@@ -18,8 +18,8 @@ module.exports = class SensorPair extends Model {
         lat: { type: "number", default: 0 },
         lng: { type: "number", default: 0 },
         name: { type: "string" },
-        camera_id: { type: "integer" },
-        motion_id: { type: "integer" },
+        camera_id: { type: "integer", minimum: 0 },
+        motion_id: { type: "integer", minimum: 0 },
       },
     };
   }
