@@ -1,1 +1,88 @@
 \chapter{Testing}
+
+\section{\acrshort{api} Server Testing}
+
+To ensure that the \acrshort{api} server works with as few errors and
+incorrect responses as possible, a series of automated test suites were set
+up that could be run on the codebase. Two different types of test were
+used\textemdash~functional (unit) tests, that run the actual models and
+methods to ensure they act as expected, and integration tests, that perform
+actual \acrshort{http} requests to the server to check that it returns the
+expected output, and that the output is formatted correctly.
+
+\subsection{Testing Framework}
+The Jest~\cite{jest} framework, an open source testing framework maintained
+by Facebook, was the natural choice of test framework for the project, thanks
+to its ease of setup and use, as well as a very straightforward library. Jest
+exposes an \texttt{expect} object that allows the developer to write
+\acrfull{bdd}-style tests that read almost like sentences, such as ``expect
+this status code to be 200''. The Jest project also feature very extensive
+documentation about using the \texttt{expect} object on their
+website~\cite{jest-expect}.
+
+To ensure strict code style and readability, a code linter was also
+integrated into the project. The chosen linter was \texttt{ESLint}, a popular
+JavaScript linter that can highlight formatting issues, inaccessible
+(``dead'') code, and other style violations that may lead to unintentional
+behaviour. One example of this is comparing two variables with the
+\textit{equality} operator (\texttt{==}) rather than using the \textit{strict
+equality} operator (\texttt{===}), which additionally tests for type equality
+as well as value equality.
+
+Formatting rules specified in the Airbnb JavaScript Style
+Guide~\cite{airbnb-javascript} were used as the main rules for the linter, as
+well as rules introduced by the \texttt{Prettier} formatter, which formats
+the code when the user saves. The Airbnb JavaScript Style Guide is a popular
+code style for JavaScript\textemdash~as of 2018-03-23, nearly seventy
+thousand users have ``starred'' the GitHub
+repository~\cite{airbnb-javascript}. This means that it is a rather standard
+way of formatting code, and should help to increase the chance of any
+possible collaboration in the future.
+
+A test script was also added to the root of the project, inside the
+\texttt{package.json} file, that allows for all of the project's tests to be
+run at once. This was then integrated with the JavaScript packages
+\texttt{husky} and \texttt{lint-staged} so that the code was linted,
+formatted, and all the tests run prior to a commit being created. The commit
+would then be cancelled if there was a linter error or one or more tests failed.
+
+\subsection{Creating The Unit Tests}
+The unit tests were derived from the expectations held on how the code
+representations of the data models (for instance, the JavaScript classes that
+represent the base stations, sensor pairs and readings) are initialised with
+correct values, and validate their possible input values correctly. For
+instance, each sensor pair has a \texttt{camera\_id} and a
+\texttt{motion\_id} that stores the identifiers for the camera and motion
+sensors in that pair. Those IDs should be positive integers, so tests must be
+devised that ensure that the model accepts positive integers and rejects any
+other input, by testing the model against as many different inputs as
+possible.
+
+\subsection{Creating The Integration Tests}
+
+\subsection{Test Results And Coverage Report}
+
+In the submitted \acrshort{api} code, all forty-six of the tests written pass
+successfully, and none are failing, which is what is expected from code that
+was written using the \acrfull{tdd} methodology (write the tests, then write
+the code to pass the tests). This also reflects how code would be written in
+industry to meet quality control standards. However, the test pass rate is
+only one half of the story, because it counts for nothing if the tests don't
+cover enough of the application's code. Jest provides a test coverage
+analyser as part of its test suite, which analyses the project's code and
+returns a percentage of how much of the code is covered by tests.
+Table~\ref{tab:testcoverage} shows the output from the Jest test coverage
+report. Overall, the tests cover 82.9\% percent of all code statements made,
+60.7\% of all possible code branches, 73.1\% of all functions, and 82.7\% of
+all lines.
+
+This statistic is reasonably high for a small project , but to
+improve reliability of the server, more tests can and should be added in the
+future. Ideally, one should always aim to achieve 100\% test coverage, but
+time constraints can impair this. Zhu et al discuss the various merits of
+these test coverage metrics in great detail in \textit{Software Unit Test
+Coverage and Adequacy}~\cite{zhu1997software}, but combined these metrics
+serve as a useful insight into how effectively the tests actually test the
+code written.
+
+\input{figures/testcoverage.tex}

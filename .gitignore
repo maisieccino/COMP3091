@@ -242,3 +242,4 @@ srv/yarn-error.log
 
 srv/dev.sqlite3
 srv/coverage
+coverage
