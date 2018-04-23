@@ -60,6 +60,22 @@ possible.
 
 \subsection{Creating The Integration Tests}
 
+The integration tests involve testing that the server as a whole works as
+intended, that when an end user sends correctly-formatted input they get the
+expected output, and if they don't they get the correct error message. This
+is sometimes referred to as textit{black-box testing}, since you are not
+testing the code itself\textemdash~rather, you are testing the
+\textit{system} as if you are the end user.
+
+To help set up and run the \acrshort{http} requests and test the server
+responses, the \texttt{supertest} library~\cite{supertest} was used. However,
+one component of the system that isn't present during testing is the
+database. Fortunately, a library exists~\cite{mock-knex} that can ``mock''
+(replicate the functionality) of the database connection library so that
+response to database queries coming from the server can be crafted to match
+various scenarios, such as no matching data existing on the database, or
+mocking the data being written to the database.
+
 \subsection{Test Results And Coverage Report}
 
 In the submitted \acrshort{api} code, all forty-six of the tests written pass
@@ -76,13 +92,12 @@ report. Overall, the tests cover 82.9\% percent of all code statements made,
 60.7\% of all possible code branches, 73.1\% of all functions, and 82.7\% of
 all lines.
 
-This statistic is reasonably high for a small project , but to
-improve reliability of the server, more tests can and should be added in the
-future. Ideally, one should always aim to achieve 100\% test coverage, but
-time constraints can impair this. Zhu et al discuss the various merits of
-these test coverage metrics in great detail in \textit{Software Unit Test
-Coverage and Adequacy}~\cite{zhu1997software}, but combined these metrics
-serve as a useful insight into how effectively the tests actually test the
-code written.
+This statistic is reasonably high for a small project, but to improve
+reliability of the server, more tests can and should be added in the future.
+Ideally, one should always aim to achieve 100\% test coverage, but time
+constraints can impair this. Zhu et al discuss the various merits of these
+test coverage metrics in great detail in \textit{Software Unit Test Coverage
+and Adequacy}~\cite{zhu1997software}, but combined these metrics serve as a
+useful insight into how effectively the tests actually test the code written.
 
 \input{figures/testcoverage.tex}
