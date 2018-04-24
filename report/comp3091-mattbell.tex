@@ -23,6 +23,7 @@
 \definecolor{colorDoc}{HTML}{333333}
 
 \usepackage{minted}
+\setminted{fontsize=\footnotesize,linenos}
 \usemintedstyle{pastie}
 
 % https://tex.stackexchange.com/a/178806
@@ -34,7 +35,7 @@
 \newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
 
 \newfontfamily\headingfont[]{Apercu}
-\setmonofont[Color=colorDoc]{Apercu Mono}
+\setmonofont{Fira Mono}
 % \setmainfont[Color=colorDoc]{Apercu}
 \titleformat
 {\chapter} % command
