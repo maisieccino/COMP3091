@@ -5,7 +5,7 @@
 To ensure that the \acrshort{api} server works with as few errors and
 incorrect responses as possible, a series of automated test suites were set
 up that could be run on the codebase. Two different types of test were
-used\textemdash~functional (unit) tests, that run the actual models and
+used\textemdash{}functional (unit) tests, that run the actual models and
 methods to ensure they act as expected, and integration tests, that perform
 actual \acrshort{http} requests to the server to check that it returns the
 expected output, and that the output is formatted correctly.
@@ -33,7 +33,7 @@ Formatting rules specified in the Airbnb JavaScript Style
 Guide~\cite{airbnb-javascript} were used as the main rules for the linter, as
 well as rules introduced by the \texttt{Prettier} formatter, which formats
 the code when the user saves. The Airbnb JavaScript Style Guide is a popular
-code style for JavaScript\textemdash~as of 2018-03-23, nearly seventy
+code style for JavaScript\textemdash{}as of 2018-03-23, nearly seventy
 thousand users have ``starred'' the GitHub
 repository~\cite{airbnb-javascript}. This means that it is a rather standard
 way of formatting code, and should help to increase the chance of any
@@ -64,7 +64,7 @@ The integration tests involve testing that the server as a whole works as
 intended, that when an end user sends correctly-formatted input they get the
 expected output, and if they don't they get the correct error message. This
 is sometimes referred to as textit{black-box testing}, since you are not
-testing the code itself\textemdash~rather, you are testing the
+testing the code itself\textemdash{}rather, you are testing the
 \textit{system} as if you are the end user.
 
 To help set up and run the \acrshort{http} requests and test the server
@@ -99,5 +99,8 @@ constraints can impair this. Zhu et al discuss the various merits of these
 test coverage metrics in great detail in \textit{Software Unit Test Coverage
 and Adequacy}~\cite{zhu1997software}, but combined these metrics serve as a
 useful insight into how effectively the tests actually test the code written.
+
+All of the server tests can be found in the source code. Any file named
+\texttt{*.test.js} will contain tests.
 
 \input{figures/testcoverage.tex}

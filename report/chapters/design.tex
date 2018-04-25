@@ -14,6 +14,12 @@ components in the system, including the sensor deveices and the base
 stations, as well as the web server used to store and retrieve data.
 
 \subsection{Base Station}
+\begin{figure}
+  \label{fig:basestation}
+  \centering
+  \includegraphics[width=0.8\textwidth]{basestation}
+  \caption{A photo of the Ci40 Base Station.}
+\end{figure}
 As previously mentioned in the requirements, the base station is a
 \textit{Creator Ci40 \acrshort{iot} Hub} device~\cite{creatorci40}. It is a
 development board that is highly specialised for rapidly building
@@ -108,10 +114,16 @@ program at compile time, using environment variables.~\improvement{Add list
 of commands?}
 
 \subsubsection{Motion Detector Sensor}
-\todo[inline]{include image of motion click}
-The motion detector sensor uses the \gls{6lowpan} Click board described
-above, with a \textit{MikroElektronika} Motion Click
-device~\cite{motionclick} integrated onto the board using the
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{motionsensor}
+  \caption{A photo of the motion sensor, consisting of the motion board
+  installed on the 6LoWPAN clicker.}
+  \label{fig:motionsensor}
+\end{figure}
+The motion detector sensor (see Figure~\ref{fig:motionsensor}) uses the
+\gls{6lowpan} Click board described above, with a \textit{MikroElektronika}
+Motion Click device~\cite{motionclick} integrated onto the board using the
 ``\gls{mikrobus}'' port. According to the product page~\cite{motionclick}, it
 has a range of up to four metres which is probably not sufficient for real
 world usage. However, for prototyping purposes, it is perfect because of the
@@ -124,8 +136,7 @@ resumed by an event interrupt. This event could be one of:
 \begin{itemize}
   \item a timer expiring,
   \item a \acrshort{tcp} event (received packets, lost connection, et cetera),
-  \item a motion detection event received from the motion sensor.\unsure{any
-  other events?}
+  \item a motion detection event received from the motion sensor.
 \end{itemize}
 
 For the prototype version of this sensor, the code sends a ``heartbeat''
@@ -141,19 +152,25 @@ that sends the string to a server using \gls{6lowpan}, if available.
 
 \subsubsection{Camera Sensor}
 
-\todo[inline]{include image of camera click}
-The camera sensor comprises of the same \gls{6lowpan} Clicker board, but
-instead of a motion sensor, there is a \textit{MikroElektronika} Camera Click
-board~\cite{cameraclick} installed onto the \gls{mikrobus} port. The board
-contains a digital camera sensor which, according to the specification page,
-has a maximum resolution of 640 by 480 pixels. It also contains an extra
-microcontroller, which ``outputs the camera image to the target board
-microcontroller through the \gls{mikrobus} SPI interface''. Essentially, it
-appears to transform the raw data stream from the camera into a data stream
-that can be sent using \acrfull{spi} to the `target' board (in this case, the
-\gls{6lowpan} clicker). However, a lot of the board's inner
-workings\textemdash save for the board schematics, available on the product
-page\textemdash is largely closed-source.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{camerasensor}
+  \caption{A photo of the camera sensor, consisting of the camera click board
+  installed on the 6LoWPAN clicker.}
+  \label{fig:camerasensor}
+\end{figure}
+The camera sensor (see figure~\ref{fig:camerasensor}) comprises of the same
+\gls{6lowpan} Clicker board, but instead of a motion sensor, there is a
+\textit{MikroElektronika} Camera Click board~\cite{cameraclick} installed
+onto the \gls{mikrobus} port. The board contains a digital camera sensor
+which, according to the specification page, has a maximum resolution of 640
+by 480 pixels. It also contains an extra microcontroller, which ``outputs the
+camera image to the target board microcontroller through the \gls{mikrobus}
+SPI interface''. Essentially, it appears to transform the raw data stream
+from the camera into a data stream that can be sent using \acrfull{spi} to
+the `target' board (in this case, the \gls{6lowpan} clicker). However, a lot
+of the board's inner workings\textemdash{}save for the board schematics,
+available on the product page\textemdash{}is largely closed-source.
 
 The code examples provided by
 \textit{MikroElektronika}~\cite{cameraclickexamples} helped to provide a

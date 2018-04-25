@@ -1,5 +1,5 @@
 #
-# A very simple UDP server.
+# A very simple TCP server.
 # Just listens to port 9876 and prints to STDOUT
 # Plays nicely with `tee` as a result.
 import signal

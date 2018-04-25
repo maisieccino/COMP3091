@@ -1,1 +1,64 @@
 \chapter{Implementation}
+
+It would be very difficult to attempt to build a complete working system
+during the course of the project, and that would be wholly out of scope. So
+throughout this project, the idea has been to build prototypes that
+demonstrate that a fully production-ready solution is viable.
+
+\todo[inline]{Expand on this chapter intro}
+
+\section{Developing the Base Station Code}
+The main base station program is just a \acrshort{tcp} server that handles
+commands coming in from the camera and motion sensors over the \gls{6lowpan}
+connection. Since the Linux kernel can already handle the \gls{6lowpan}
+connection, and no other hardware interfaces are required, there was a lot of
+flexibility in the choice of language and framework used to build the server.
+The Python language ended up being the choice of language, for its ease of
+development and pseudocode-like syntax.
+
+The core language library also includes the \texttt{socket} library, which
+provides an easy to use, low-level interface for opening and accepting UDP
+and \acrshort{tcp} connections. The server has a global dictionary that maps
+the id numbers of sensor pairs to the id of a camera sensor and the id of a
+motion sensor. This dictionary is populated from sensors which send an
+identification (\texttt{id}) command, broadcasting their unique
+\texttt{sensor\_id} and their \texttt{pair\_id}. This means that, when a
+motion sensor sends a motion detection command to the server, the server can
+look up the ID of the camera associated with the motion sensor and send it a
+command to capture a photo.
+
+The source code for the base station server is available in section
+\ref{code:base-main} \textit{(page \pageref{code:base-main})}.
+
+\section{Developing Remote Sensor Code}
+The \gls{6lowpan} clicker that the motion and camera sensors use runs on a
+\acrfull{rtos} called \textit{Contiki}~\cite{contiki}. The code that runs on
+these devices has to be flashed to the onboard flash memory. Therefore,
+Creator provide their own toolchain for compiling and flashing user code.
+This, however, was extremely difficult to set up, and a lot of time was spent
+obtaining the tooling, attempting to install the code, and being able to
+access the clicker from my computers. A lot of documentation was missing or
+not provided, which made independent investigations into the source code
+necessary.
+
+Another issue was with writing the sensor code itself. The only provided
+documentation for Contiki is a handful of examples on its source code
+repository, as well as a tutorial on the Creator
+website~\cite{clickersetupguide}. To complicate matters further, the code
+used to program the boards is a modified version of the C language, except
+code runs in ``process threads''. However, after a lot of searching on the
+web, the Contiki wiki was discovered~\cite{contiki-wiki}. Despite being
+incredibly technical, there was helpful pieces of information available there
+to help decipher the inner workings of the Contiki platform, notably how the
+``protothreads'' work.
+
+Debugging the code was a further complication when developing the sensor
+code. The \gls{6lowpan} clicker only has a single MicroUSB port, which is
+used for flashing code to the onboard memory, and does not have a USB port of
+any kind to connect a serial terminal to. There is only two ways of debugging
+the clicker\textemdash{}sending text over the \gls{6lowpan} connection, or
+setting the two hardware LEDs on or off. A \acrshort{udp}-based debugging
+server is available along with a \texttt{PRINTF} macro, however these did not
+appear to work very well, if at all.
+
+\subsection{6LoWPAN issues}
