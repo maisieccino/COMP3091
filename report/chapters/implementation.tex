@@ -59,6 +59,41 @@ any kind to connect a serial terminal to. There is only two ways of debugging
 the clicker\textemdash{}sending text over the \gls{6lowpan} connection, or
 setting the two hardware LEDs on or off. A \acrshort{udp}-based debugging
 server is available along with a \texttt{PRINTF} macro, however these did not
-appear to work very well, if at all.
+appear to work very well, if at all. It was also found that the debugging
+server would not work if the device was making a separate connection to the
+base station, such as when sending motion commands.
 
 \subsection{6LoWPAN issues}
+A reoccurring issue throughout the development of the remote sensors was the
+reliability of the \gls{6lowpan} connection. It often took multiple minutes
+or more for the remote sensors to connect to the base station, regardless of
+whether it was a \acrshort{tcp} connection or a \acrshort{udp} connection.
+Sometimes, the devices would not connect at all, and the debugging server
+(when it worked) reported multiple dropped messages. Since the Ci40 uses the
+2.4 \acrshort{ghz} frequency band, which is shared with many WiFi standards
+as well as Bluetooth, there is a possibility that this might be caused by
+interference between these devices, especially since all of the testing
+environments available during this project were in close proximity to WiFi
+links as well as Bluetooth devices, despite best efforts.
+
+A manual published by \textit{NXP Semiconductors} highlights the issues that
+can occur from the co-existence of these technologies on the same 2.4
+\acrshort{ghz} frequency band~\cite{nxp2013ieee802154coexistence}. Notably,
+on page 19, they recommend that ``to achieve satisfactory IEEE 802.15.4
+[6LoWPAN] performance in the presence of WLAN interference, a channel
+centre-frequency offset of 7 MHz is recommended'', and if \gls{6lowpan} is
+running on the same channel as the WiFi link, ``a physical separation from
+the WLAN \acrfull{ap} of 8 m is recommended''. Essentially, they recommend
+either conducting radio operations away from WiFi \acrshort{ap}, or selecting
+a different channel if possible. However, the WiFi \acrshort{ap}s in the
+testing environment are managed by a third party, so it was not possible to
+change their channels. Additionally, the documentation for the Ci40 base
+station was not clear enough on whether it was possible to set the
+\gls{6lowpan} wireless channel or not.
+
+As a result of these \gls{6lowpan} issues, some modifications were made to
+the project. The camera sensor would be prototyped by installing the camera
+module \textit{directly} onto the Ci40 base station, to make development and
+debugging easier. Since the Ci40 runs a full Linux operating system and full
+WiFi stack, it is possible to connect to it using an \acrfull{ssh}
+connection.
