@@ -96,4 +96,120 @@ the project. The camera sensor would be prototyped by installing the camera
 module \textit{directly} onto the Ci40 base station, to make development and
 debugging easier. Since the Ci40 runs a full Linux operating system and full
 WiFi stack, it is possible to connect to it using an \acrfull{ssh}
-connection.
+connection. In addition to this, code designed to run on the camera clicker
+was not developed because it would be extremely similar to the motion sensor
+code, albeit with the camera processing code instead of the motion sensor
+event handling code.
+
+\subsection{Working With The Camera Click Module}
+One of the biggest obstacles during the project was working with the
+\textit{MikroElektronika Camera Click} module~\cite{cameraclick}, to be used
+as part of the prototype hardware for the remote camera sensor. The only
+documentation provided for this sensor is available on their ``LibStock''
+website~\cite{cameraclickexamples}, but the only documentation provided is a
+board schematic and a code example, designed to be used with
+\textit{MikroElektronika}'s own TFT display, with its own proprietary image
+format.
+
+However, the code example provided was enough to discover roughly how the
+camera click board works and responds to input. It uses the \acrshort{spi}
+interface to receive commands and send a new or buffered image back to the
+parent device. The commands supported are, according to the code examples:
+
+\begin{itemize}
+  \item \texttt{\_\_CMD\_WRITE\_REG} (assumed) write to the registers on the
+  camera \acrfull{mcu}, to set things like exposure and brightness settings.
+  \item \texttt{\_\_CMD\_READ\_REG} (assumed) read from the registers on the
+  camera \acrshort{mcu}.
+  \item \texttt{\_\_CMD\_GET\_FRAME} capture a new photo and prepare to send
+  it back through the \acrshort{spi} interface.
+  \item \texttt{\_\_CMD\_GET\_FRAME\_BUFFERED} (assumed) get the currently
+  buffered image from the camera, without capturing a new image.
+  \item \texttt{\_\_CMD\_SET\_ROW\_NUM} unknown.
+  \item \texttt{\_\_CMD\_SET\_ROW\_SIZE} unknown.
+\end{itemize}
+
+\subsubsection{The \acrshort{spi} Interface}
+The \acrshort{spi} involves one ``primary'' device, which sends commands to
+one or more ``secondary'' devices. There is four data lines involved:
+
+\begin{itemize}
+  \item CS\textemdash{}Chip Select. Selects the secondary device to use.
+  \item MISO\textemdash{}Transmits data from the primary device to the
+  secondary device.
+  \item MOSI\textemdash{}Transmits data from the secondary device to the
+  primary device.
+  \item CLK\textemdash{}Timing signal.
+\end{itemize}
+
+The primary and secondary devices transmit data as if they were one
+``rotary'' system. Each side has a buffer of a fixed size (in the case of the
+camera module, 8 bits), and as the primary device pushes a bit to the
+\acrshort{spi} interface, the secondary device sends a bit back. This
+continues until the buffers are essentially swapped around.\todo{add SPI
+diagram} One peculiarity in this implementation of \acrshort{spi} is that
+the camera module use sa separate ``interrupt'' pin (provided by the
+\gls{mikrobus} standard) to let the primary device know that it is ready for
+commands.
+
+\subsubsection{Getting Camera Output}
+The code in Section~\ref{code:camera-base} shows the code used to attempt to
+obtain output from the camera sensor, installed onto one of the Ci40's
+\gls{mikrobus} ports. It works by initialising the \acrshort{spi} pins and
+setting speed and other settings, before waiting for the camera to send a
+``ready'' signal and then sending the \acrshort{spi} command to get an image
+from the camera. It then reads the incoming data to a buffer, and saves that
+buffer to a file. The data \textit{should}, in theory, be the image data from
+the camera. This code should work since it roughly follows the steps used in
+\textit{MikroElektronika}'s example code. However, the camera module
+frequently returns a lot of blank data. Below is one example of data received
+from the camera sensor after sending a \texttt{\_\_CMD\_GET\_FRAME} command:
+
+\begin{verbatim}
+  [mbell@chancery-lane ~]$ hexdump ~/out.bin
+  0000000 ffff ffff ffff ffff ffff ffff ffff ffff
+  *
+  000c600 0000 0000 0000 0000 c611               
+  000c60a
+\end{verbatim}
+
+\subsubsection{Interpreting Camera Output}
+Sometimes the camera would send data that was not just a stream of \texttt{1}
+bits, however it was not clear whether the returned data was nonsense, or if
+the data was in some proprietary data format.
+
+Figure~\ref{fig:yuvimage} shows the data previewed as a \textit{YUV} image.
+This is an 8-bit pixel encoded image format that contains three values for
+each colour\textemdash{}the brightness (also called luminance), and two
+values defining the colour itself (the chroma)~\cite{softpixelyuv}. The data
+was estimated to be using some kinda of YUV format, because of reoccurring
+patterns in the data that suggested that pixel data was set as some 4-bit
+value, then two 2-bit values.
+
+The possibility of the data being stored as \acrfull{rgb} data was ruled out
+when attempting to parse the raw image file as such. The results can be seen
+in figure~\ref{fig:rgbimage}. It is clear that the data is not \acrshort{rgb}
+since the rendering software runs out of bits roughly two-thirds of the way
+through parsing the image. Since public access to the source code for the
+camera module was prohibited by the manufacturer, it was impossible to tell
+whether the image format chosen was incorrect, or if the camera module itself
+was defective or damaged. Therefore, no image was ever able to be correctly
+obtained from the camera module.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{cameraoutput1}
+  \caption{The data received from the camera sensor, interpreted as a YUV-formatted image.}
+  \label{fig:yuvimage}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{cameraoutput2}
+  \caption{The data received from the camera sensor, interpreted as a RGB-formatted raw image.}
+  \label{fig:rgbimage}
+\end{figure}
+
+\subsubsection{Read-Only Register Random Number Generator}
+The camera module used on the camera sensor is the OV7670-VL2A CMOS sensor,
+and a datasheet is readily available online~\cite{omnivisiondatasheet}.
