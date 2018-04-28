@@ -7,7 +7,7 @@ demonstrate that a fully production-ready solution is viable.
 
 \todo[inline]{Expand on this chapter intro}
 
-\section{Developing the Base Station Code}
+\section{Developing The Base Station Code}
 The main base station program is just a \acrshort{tcp} server that handles
 commands coming in from the camera and motion sensors over the \gls{6lowpan}
 connection. Since the Linux kernel can already handle the \gls{6lowpan}
@@ -30,7 +30,24 @@ command to capture a photo.
 The source code for the base station server is available in section
 \ref{code:base-main} \textit{(page \pageref{code:base-main})}.
 
-\section{Developing Remote Sensor Code}
+\subsection{Developing The Species Classification Software}
+Less time was available in practice for developing the species classification
+software than intended, because of the complications arising from developing
+for the remote sensors as well trying to use the camera module. However, some
+exploration was made into the the techniques available to detect and classify
+species from a photo image.
+
+Naturally, this was a problem well suited for a \acrfull{cnn}.
+\acrshort{cnn}s, according to Christopher Olah's blog post on the
+subject~\cite{olah2014conv}, ``can be thought of as a kind of neural network
+that uses many identical copies of the same neuron''. Each of these `neurons'
+uses contains a mathematically trivial function, such as calculating mean
+averages of a set of pixel colours, to reduce the problem down. Weighted
+values are used to interpret these outputs and produce the final output of
+the network. These weights are ``trained'' (adjusted) using a training set of
+data, so that the network's output matches the expected output.
+
+\section{Developing The Remote Sensor Code}
 The \gls{6lowpan} clicker that the motion and camera sensors use runs on a
 \acrfull{rtos} called \textit{Contiki}~\cite{contiki}. The code that runs on
 these devices has to be flashed to the onboard flash memory. Therefore,
@@ -130,27 +147,26 @@ parent device. The commands supported are, according to the code examples:
 \end{itemize}
 
 \subsubsection{The \acrshort{spi} Interface}
-The \acrshort{spi} involves one ``primary'' device, which sends commands to
-one or more ``secondary'' devices. There is four data lines involved:
+The \acrshort{spi} involves one ``master'' device, which sends commands to
+one or more ``slave'' devices. There is four data lines involved:
 
 \begin{itemize}
-  \item CS\textemdash{}Chip Select. Selects the secondary device to use.
-  \item MISO\textemdash{}Transmits data from the primary device to the
-  secondary device.
-  \item MOSI\textemdash{}Transmits data from the secondary device to the
-  primary device.
+  \item CS\textemdash{}Chip Select. Selects the slave device to use.
+  \item MISO\textemdash{}Transmits data from the master device to the slave
+  device.
+  \item MOSI\textemdash{}Transmits data from the slave device to the master
+  device.
   \item CLK\textemdash{}Timing signal.
 \end{itemize}
 
-The primary and secondary devices transmit data as if they were one
-``rotary'' system. Each side has a buffer of a fixed size (in the case of the
-camera module, 8 bits), and as the primary device pushes a bit to the
-\acrshort{spi} interface, the secondary device sends a bit back. This
-continues until the buffers are essentially swapped around.\todo{add SPI
-diagram} One peculiarity in this implementation of \acrshort{spi} is that
-the camera module use sa separate ``interrupt'' pin (provided by the
-\gls{mikrobus} standard) to let the primary device know that it is ready for
-commands.
+The master and slave devices transmit data as if they were one ``rotary''
+system. Each side has a buffer of a fixed size (in the case of the camera
+module, 8 bits), and as the master device pushes a bit to the \acrshort{spi}
+interface, the slave device sends a bit back. This continues until the
+buffers are essentially swapped around.\todo{add SPI diagram} One peculiarity
+in this implementation of \acrshort{spi} is that the camera module use sa
+separate ``interrupt'' pin (provided by the \gls{mikrobus} standard) to let
+the master device know that it is ready for commands.
 
 \subsubsection{Getting Camera Output}
 The code in Section~\ref{code:camera-base} shows the code used to attempt to
@@ -196,20 +212,47 @@ whether the image format chosen was incorrect, or if the camera module itself
 was defective or damaged. Therefore, no image was ever able to be correctly
 obtained from the camera module.
 
-\begin{figure}
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.8\textwidth]{cameraoutput1}
-  \caption{The data received from the camera sensor, interpreted as a YUV-formatted image.}
+  \caption{The data received from the camera sensor, interpreted as a
+  YUV-formatted image.}
   \label{fig:yuvimage}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.8\textwidth]{cameraoutput2}
-  \caption{The data received from the camera sensor, interpreted as a RGB-formatted raw image.}
+  \caption{The data received from the camera sensor, interpreted as a
+  RGB-formatted raw image.}
   \label{fig:rgbimage}
 \end{figure}
 
 \subsubsection{Read-Only Register Random Number Generator}
 The camera module used on the camera sensor is the OV7670-VL2A CMOS sensor,
 and a datasheet is readily available online~\cite{omnivisiondatasheet}.
+Included in the datasheet is a list of the sensor's registers, detailing the
+register's:
+
+\begin{itemize}
+  \item One byte address (in hexadecimal),
+  \item Name of the register,
+  \item The default hexadecimal value,
+  \item Whether it can be read and/or written to,
+  \item And a description of what the register represents.
+\end{itemize}
+
+Two of these registers were of significance for testing the \acrshort{spi}
+interface, addresses \texttt{1C} and \texttt{1D}. These are both read-only
+registers that return the high byte and low byte (respectively) of the two
+byte manufacturer ID. They are both read only and are supposed to always
+return \texttt{0x7F} and \texttt{0xA2} respectively.
+
+However, when this was attempted on the \texttt{camera\_base} application
+(see Section~\ref{code:camera-base} lines 141\textendash{}144), the program
+received random numbers each time. \todo{Include screenshot/text output of
+command being run} Either one of two explanations is
+possible\textemdash{}either the code to read from the register is incorrect,
+or the camera click board is defective. As with trying to read the image
+itself, it is impossible to conclude which of these explanations is correct
+without being able to access the \textit{MikroElektronika} source code.

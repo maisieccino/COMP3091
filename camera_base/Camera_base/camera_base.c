@@ -140,7 +140,7 @@ int main(void)
 
     printf("attempt to read reg... expecting %d\n", 0x7f);
     uint8_t reg_val = 0;
-    read_reg(0x1d, &reg_val);
+    read_reg(0x1c, &reg_val);
     printf("...result: %d\n", reg_val);
     printf("Attempting to get camera image...\n");
     printf("god bless this mess.\n");
