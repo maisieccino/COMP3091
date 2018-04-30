@@ -67,8 +67,6 @@ provided by the board manufacturer to increase ease of development.
 
 \subsection{Remote Sensors}
 
-\unsure[inline]{include graphic of camera pairs in trees etc?}
-
 The system also utilises a set of remote sensors that wirelessly connect with
 the base station using a \gls{6lowpan} connection. There's two kinds of
 sensors being used in the system, motion detector sensors and camera sensors.
@@ -119,8 +117,7 @@ A unique \texttt{device\_id} is provided by every sensor to identify itself
 to the base station server, and on its first connection it will also provide
 a \texttt{pair\_id} which tells the server which unique camera/motion
 detector pair the device belongs to. Each of these are provided to the sensor
-program at compile time, using environment variables.~\improvement{Add list
-of commands?}
+program at compile time, using environment variables.
 
 \subsubsection{Motion Detector Sensor}
 \begin{figure}
@@ -222,7 +219,7 @@ be represented. This is achieved in three stages:
   \item Construct an entity-relationship diagram, to represent how each of
   the entities listed interact with each other. This also introduces the
   notion of multiplicity; for instance, how many base stations does a sensor
-  pair interact with?~\todo{include E-R diagram (and ref here)}
+  pair interact with?
   \item For each entity, deciding what data needs to be stored and accessible
   from the \acrshort{api}. As mentioned earlier, a lot of data is actually
   excluded here since it is only relevant at a lower level. An example of

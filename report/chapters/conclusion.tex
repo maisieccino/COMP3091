@@ -1,1 +1,97 @@
-\chapter{Conclusion}
+\chapter{Evaluation and Conclusion}
+
+\section{Evaluation of Expected Deliverables}
+Below is a list of the expected outcomes and deliverables specified at the
+start of the project and if they have been achieved (and to what extent).
+
+\subsection{Base Station Program}
+\textit{``A program built for the Creator Ci40 prototyping board that can
+read in an image sent by the external camera module, and classify the types
+and counts of animals in the image, before sending this data to a base
+station via a LORA connection.''}
+
+\noindent
+This deliverable was only partially completed. A small program was created
+that can handle sensors connecting to the base station, as well as receiving
+motion events, but the classification program was not built.
+
+\subsection{Motion Sensor Program}
+\textit{``A program for the IR clicker device to detect movement and send a
+message to a nearby camera device.''}
+
+\noindent
+This deliverable was completed and works to a reasonable standard, despite
+issues with the onboard wireless radios.
+
+\subsection{Camera Sensor Program}
+\textit{``A program for the camera device to take a photo when it receives a
+command via 6LoWPAN and send it to the Ci40 board.''}
+
+\noindent
+This deliverable was not completed, because of multiple issues using the
+provided camera sensor and getting any readable data from it.
+
+\subsection{Cloud Server}
+\textit{``A simple cloud service to store and display results received from the
+prototype boards''.}
+
+\noindent
+This deliverable was completed to a high standard.
+
+\subsection{Tests}
+\textit{``A rigorous testing regime for as much code as possible.''}
+
+\noindent
+This deliverable was met for the cloud server, as well as acceptance testing being conducted for the motion sensor.
+
+\subsection{Real-Life Test}
+\textit{``(If possible) a real-life test of the system in an uncontrolled
+environment (i.e. a park or zoo).''}
+
+\noindent
+This was not met due to the other incomplete deliverables.
+
+\section{Evaluation of Achievements}
+Despite not all goals being met, the project should overall be considered
+successful. The research conducted early in the project highlighted a clear
+need for such an autonomous system to be developed, and recent strides in the
+field of computer vision mean that such systems are becoming faster and
+cheaper to deploy. However, it was a shame that not all of the deliverables
+could be completed, especially being able to test the system in a real-life
+setting.
+
+One of the biggest and persistent issues throughout the project was problems
+developing on the given hardware and using it to the best of its ability.
+These problems were discussed in the \textit{Implementation} chapter,
+including lack of documentation regarding the libraries used to connect to
+sensor and hardware, as well as wireless connections not working as intended.
+In hindsight, perhaps it would have been best to swap the hardware out for
+better documented, more reliable (although perhaps a lot less realistic)
+hardware, like the Arduino platform~\cite{arduino}. The devices may not be as
+energy efficient as the ones used in this project, but that could be
+considered a less important characteristic for a technical demonstration.
+
+Also, it may have been wiser to begin researching and developing the deep
+learning classifier earlier on in the project. The work plan, devised at the
+start of the project, mentioned researching and developing this section of
+the project from November onwards, whereas perhaps research into different
+techniques and frameworks should have been made earlier on.
+
+\section{Possible Future Work}
+There is a lot of promise in developing deep learning solutions to such a
+problem as automatically classifing animals in camera trap images, and a lot
+of recent breakthroughs have been extremely exciting\textemdash{}including
+the work of Elias et al~\cite{elias2017s} whose work was published since the
+start of this project. Perhaps the rise of general yet powerful models for
+computer vision such as Inception-v3~\cite{szegedy2016rethinking} remove most
+of the need for bespoke models to be created to solve these kinds of
+problems, allowing more and more people to build exciting and powerful
+applications for computer vision classification.
+
+Additionally, leaps in the field of mobile computing are also incredibly
+exciting. New development boards are appearing every day that can run on very
+small amounts of power, vastly increasing expected lifetimes of such projects
+as this one, as well as reducing costs needed to maintain and replace
+sensors; perhaps future work in this domain could include building clustered
+networks of sensors that can be highly resilient to link disruption, yet
+still consume just a small amount of power.

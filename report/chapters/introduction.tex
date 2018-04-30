@@ -61,7 +61,25 @@ regularly would be failing this. Consequently, the system would have to rely
 on hardware interrupts as much as possible, so that the devices can remain in
 a ``sleep mode'' when they are not needed.
 
-\todo[inline]{Formal Requirements}
+\subsection{Expected Outcomes And Deliverables}
+Below is a list of the expected outcomes and deliverables specified at the
+start of the project.
+
+\begin{itemize}
+    \item A program built for the Creator Ci40 prototyping board that can read
+        in an image sent by the external camera module, and classify the types
+        and counts of animals in the image, before sending this data to a base
+        station via a LORA connection
+    \item A program for the IR clicker device to detect movement and send a
+        message to a nearby camera device
+    \item A program for the camera device to take a photo when it receives a
+        command via 6LoWPAN and send it to the Ci40 board
+    \item A simple cloud service to store and display results received from the
+        prototype boards
+    \item A rigorous testing regime for as much code as possible
+    \item (If possible) a real-life test of the system in an uncontrolled
+        environment (i.e. a park or zoo)
+\end{itemize}
 
 \section{Research}
 
@@ -76,8 +94,48 @@ Animal Species in Camera-trap Images using Very Deep Convolutional Neural
 Networks}
 In this paper by Gómez et al~\cite{gomez2016towards}, a similar project is
 detailed to this one, in which the authors create a \acrlong{cnn} using the
-same Project Serengeti~\cite{swanson2015snapshot} camera trap images. Their
+same Snapshot Serengeti~\cite{swanson2015snapshot} camera trap images. Their
 model uses ``off-the-shelf'' features of their chosen framework, and acheived
 a ``top-5'' accuracy of 88.9\%, which is significant when compared to the
 crowdsourced classifications which obtained an accuracy of
 96\%~\cite{swanson2015snapshot}.
+
+\subsubsection{Automatically identifying, counting, and describing wild
+animals in camera-trap images with deep learning}
+This paper by Norouzzadeh et al~\cite{norouzzadehautomatically} is in a
+similar tone to the paper published by Gómez et al~\cite{gomez2016towards}.
+They use the same Snapshot Serengeti dataset, but manage an accuracy of
+``over 93.8\%'', and can also ``ìdentify count and describe animals'' in the
+images (identifying features like whether the animals are standing or not, if
+they are moving or not, and so on). The authors conclude that they can ``save
+99.3\% of the manual labour (over 17,000 hours) while performing at the same
+96.6\% accuracy level of human volunteers'', and highlight the benefits of
+having more labour time for other scientific activities.
+
+\subsubsection{Where’s The Bear?- Automating Wildlife Image Processing
+Using IoT and Edge Cloud Systems}
+The \textit{Where's The Bear} project~\cite{elias2017s} involves a similar
+system to the one theorised in this project; however one key difference is
+that they run a server onsite, at a headquarters building, allowing them more
+easily transmit images from the camera traps to a server with higher
+processing power than a low-powered device. The authors crucially also
+deployed this to the wild with an accuacy of ``at least 0.90''. Another key
+difference is that rather than develop their own deep learning model, they
+used a technique called ``transfer learning'', to apply an existing model to
+a new problem domain (in this case, the Inception-v3
+model~\cite{szegedy2016rethinking}), which saved them a lot of time in having
+to design and train a model from the ground up.
+
+\subsubsection{Design and Implementation of an Open Source Camera Trap}
+This paper by Nazir et al~\cite{nazir2014design} focuses on the deployment of
+remote, Internet-connected sensing devices in ``the remotest part of the
+world''. The focus of this project was to be able to have Internet access to
+the camera traps in a ``harsh outdoor environment'', using a satellite uplink
+for Internet connectivity, as well as being solar powered to increase the
+operating lifetime of the sensors as much as possible. Such a project like
+this demonstrates that the tools and technology exist to build an almost
+completely autonomous sensing system that can be deployed once and never has
+to be maintained. The authors also used more powerful hardware in their
+deployment than used in this project, the Raspberry Pi B~\cite{raspberrypib},
+which can easily handle more computationally-intensive tasks, like image
+processing and running deep learning models.

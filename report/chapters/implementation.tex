@@ -5,7 +5,9 @@ during the course of the project, and that would be wholly out of scope. So
 throughout this project, the idea has been to build prototypes that
 demonstrate that a fully production-ready solution is viable.
 
-\todo[inline]{Expand on this chapter intro}
+A lot of the development work was also slowed down by a number of unforseen
+hardware issues, which are detailed in this chapter along with other
+implementation details.
 
 \section{Developing The Base Station Code}
 The main base station program is just a \acrshort{tcp} server that handles
@@ -270,10 +272,20 @@ The master and slave devices transmit data as if they were one ``rotary''
 system. Each side has a buffer of a fixed size (in the case of the camera
 module, 8 bits), and as the master device pushes a bit to the \acrshort{spi}
 interface, the slave device sends a bit back. This continues until the
-buffers are essentially swapped around.\todo{add SPI diagram} One peculiarity
-in this implementation of \acrshort{spi} is that the camera module use sa
-separate ``interrupt'' pin (provided by the \gls{mikrobus} standard) to let
-the master device know that it is ready for commands.
+buffers are essentially swapped around (see figure~\ref{fig:spi}). One
+peculiarity in this implementation of \acrshort{spi} is that the camera
+module use sa separate ``interrupt'' pin (provided by the \gls{mikrobus}
+standard) to let the master device know that it is ready for commands.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{spi}
+  \caption{A diagram showing data being swapped between two SPI devices.
+  Image created by Cburnett on Wikimedia Commons. Obtained from Wikimedia
+  Commons under the GNU Free Documentation License. Source: 
+  \url{https://commons.wikimedia.org/wiki/File:SPI_8-bit_circular_transfer.svg}}
+  \label{fig:spi}
+\end{figure}
 
 \subsubsection{Getting Camera Output}
 The code in Section~\ref{code:camera-base} shows the code used to attempt to
@@ -357,9 +369,37 @@ return \texttt{0x7F} and \texttt{0xA2} respectively.
 
 However, when this was attempted on the \texttt{camera\_base} application
 (see Section~\ref{code:camera-base} lines 141\textendash{}144), the program
-received random numbers each time. \todo{Include screenshot/text output of
-command being run} Either one of two explanations is
-possible\textemdash{}either the code to read from the register is incorrect,
-or the camera click board is defective. As with trying to read the image
-itself, it is impossible to conclude which of these explanations is correct
-without being able to access the \textit{MikroElektronika} source code.
+received random numbers each time (see Figure~\ref{fig:missingmessages} for
+server output). Either one of two explanations is possible\textemdash{}either
+the code to read from the register is incorrect, or the camera click board is
+defective. As with trying to read the image itself, it is impossible to
+conclude which of these explanations is correct without being able to access
+the \textit{MikroElektronika} source code.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{missingmessages}
+  \caption{Screenshot of a terminal image showing the debugging server
+  missing messages from the remote sensor.}
+  \label{fig:missingmessages}
+\end{figure}
+
+\section{Developing The API Server}
+The \acrshort{api} server was built entirely using the Node.js
+framework~\cite{nodejs}, which runs JavaScript code on computers and servers
+without a web browser. It was chosen for ease of development, and since the
+server would be managing a \acrshort{json} \acrshort{api}, it made sense to
+use a language which natively supports \acrshort{json} too.
+
+The server framework used was Koa~\cite{koa}, which supports modern
+JavaScript features such as asynchronous functions. Almost all helper
+functionality (such as URL routing) is not provided as part of the core
+package, meaning that the library has a very small blueprint\textemdash{}this
+is very useful for fast deployment to cloud servers. The database of choice
+was PostgreSQL; this again was a choice made because of similarity with the
+program, as well as very few differences between it and its competition (for
+example, MySQL and MariaDB).
+
+All of the code was developed using a \acrfull{bdd} methodology, meaning that
+tests were written before the code itself. This is expanded on in more detail
+in the \textit{Testing} chapter. The final code can be found in the appendices.
