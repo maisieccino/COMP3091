@@ -78,16 +78,25 @@ detector attachment.
 
 \subsubsection{Hardware Design}
 
-\todo[inline]{Include image of 6LoWPAN clicker}
-The \textit{MikroElektronika} \gls{6lowpan} Click Board, as previously
-mentioned, runs a \acrfull{rtos} called \gls{contiki}. According to the
-\gls{contiki} project website~\cite{contiki}, it is ideal for low-power
-\acrshort{iot} projects since it supports the full \acrshort{ipv4} and
-\acrshort{ipv6} networking suites, as well a being able to run on ``tiny
-systems, only having a few kilobytes of memory available''. \textit{Creator},
-the manufacturers of the Ci40 base station, provide a toolchain for writing
-programs to the click board, as well as abstraction libraries for network and
-sensor interfaces~\cite{letmecreate}.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{6lowpanclicker}
+  \caption{A photo of the \textit{MikroElektronika} \gls{6lowpan} Clicker
+  development board. Visible is the sixteen-pin \gls{mikrobus} interface, as
+  well as a MicroUSB port to the rear.}
+  \label{fig:6lowpanclicker}
+\end{figure}
+
+The \textit{MikroElektronika} \gls{6lowpan} Click Board (see
+Figure~\ref{fig:6lowpanclicker}), as previously mentioned, runs a
+\acrfull{rtos} called \gls{contiki}. According to the \gls{contiki} project
+website~\cite{contiki}, it is ideal for low-power \acrshort{iot} projects
+since it supports the full \acrshort{ipv4} and \acrshort{ipv6} networking
+suites, as well a being able to run on ``tiny systems, only having a few
+kilobytes of memory available''. \textit{Creator}, the manufacturers of the
+Ci40 base station, provide a toolchain for writing programs to the click
+board, as well as abstraction libraries for network and sensor
+interfaces~\cite{letmecreate}.
 
 Creator also provide a set of guides to help set up and write programs to the
 flash memory onboard the clicker device~\cite{clickersetupguide}, which have

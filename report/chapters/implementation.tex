@@ -30,7 +30,7 @@ command to capture a photo.
 The source code for the base station server is available in section
 \ref{code:base-main} \textit{(page \pageref{code:base-main})}.
 
-\subsection{Developing The Species Classification Software}
+\subsection{Developing The Species Classifier}
 Less time was available in practice for developing the species classification
 software than intended, because of the complications arising from developing
 for the remote sensors as well trying to use the camera module. However, some
@@ -46,6 +46,113 @@ averages of a set of pixel colours, to reduce the problem down. Weighted
 values are used to interpret these outputs and produce the final output of
 the network. These weights are ``trained'' (adjusted) using a training set of
 data, so that the network's output matches the expected output.
+
+Because of the unforseen issues surrounding the \gls{6lowpan} connectivity
+and the camera sensor, there was less time than planned to develop a
+prototype classification program. However, some exploration was made into the
+techniques that could be used to build a classifier that can run on the Ci40
+board.
+
+\subsubsection{Defining A Model}
+The first step to defining a deep learning model is to specify the input and
+the output. The input is a 172 by 144 pixel (also known as ``QCIF format'')
+image captured using the camera sensor, while the output is a probability
+distribution of size $N$, giving the probabilities that the content of the
+image is one of $N$ different categories\textemdash{}in this case, it would
+be the list of animals we are classifying for, as well as a ``no animal''
+category and a ``unknown'' category. And as for the intermediary steps in the
+model? That's where a trained \acrlong{cnn} is used.
+
+\acrshort{cnn}s are made up of a set of ``layers'', which are put together to
+form the network. According to the Stanford CS231n course
+notes~\cite{cs321n-cnn}, there are five main types of layers:
+
+\begin{itemize}
+  \item Input layer\textemdash{}the raw data input into the network. For this
+  project, the 172x144 pixel images from the camera sensor.
+  \item Convolutional layer\textemdash{}a layer of neurons that each perform
+  a compution on a small region, or a ``kernel'', of the image. Multiple
+  ``filters'' may be used in this layer to detect different features. E.g.
+  one filter may detect vertical edges, another may detect horizontal edges.
+  \item Activation layer\textemdash{}applies some kind of activation function
+  to each output from the previous layer to determine whether the neuron
+  ``fires'' or not. The simplest example, also given by the CS231n course
+  notes~\cite{cs321n-cnn} is a threshold function like $max(0, x)$, which
+  will have a range of $\{ 0, \mathbb{N}^{+} \}$.
+  \item Pooling layer\textemdash{}Performs operations on groups of neurons to
+  result in a smaller output. Useful for working on large, high-level
+  features in images.
+  \item Fully-connected layer\textemdash{}this is the final layer in the
+  network, and takes \textit{all} outputs from the previous layer and creates
+  the final output; in this case it will produce a list of probabilities of
+  the image being classified into a certain category/species.
+\end{itemize}
+
+\input{figures/ml-model.tex}
+
+Figure~\ref{fig:cnn} shows a visualisation of how the layers of our neural
+network would interact with each other. Three-dimensional space is required
+since each layer is three-dimensional; the input, for example, takes an image
+with a width, height and three colour values for each pixel.
+
+\subsubsection{Finding A Suitable Training Set}
+
+Manually building and labelling a set of images to train the model would have
+taken an extremely long time, since thousands of images would have to be
+obtained to help prevent the model from being \gls{overfit}ted to the training
+data (although other methods such as using the ``Dropout''
+technique~\cite{srivastava2014dropout} can also reduce overfitting). For a
+production-ready system, a bespoke training set would be very suitable,
+especially for longer-term projects. However, for this prototype system, it
+was decided to use a pre-existing training set to focus purely on the deep
+learning model.
+
+The first choice was to find a training set with woodland animals, which
+would be pertinent to this project. Unfortunately none were found, so the
+next best fit would be any kind of annotated camera trap data. Fortunately, a
+set of over four thousand camera annotated trap images, classified by
+``multiple experts'', was published as part of the Snapshot Serengeti
+project~\cite{swanson2015snapshot} and released
+online~\cite{swanson2015data}. The images are annotated with the number of
+species in the image, an id relating to one of 48 species in the dataset (or
+``unknown''), and the number of individual animals in the image.
+
+Although this training data is not \textit{exactly} the kind of data that
+would be collected in a production-ready version of this project, it provides
+a good enough picture of the kinds of challenges that may be faced by such a
+deep learning model in this project's application, such as views being
+obstructed by foliage, multiple species being visible, and images where it is
+impossible to determine what species is in the photo.
+
+The script detailed in Section~\ref{code:classify-getimages} is used to
+download the Project Serengeti gold standard data set file (formatted as a
+\acrshort{csv} file), as well as the \acrshort{csv} file containing the URL
+of each image by ID. It then filters the list for the training set we want
+(images with only a single animal in the photo), fetches the actual photo,
+then resizes it into a common format (128x128 pixel JPEG file). This results
+in 1572 images to be used for testing and training. The test data is split,
+so that roughly the first eight percent (1250) of the images are used for
+training, and roughly the last twenty percent (322) are used for testing the
+model. A nice round number for the training set size is helpful so that the
+training can occur in batches.
+
+\subsubsection{Architectural Incompatibilities}
+The biggest drawback to using TensorFlow to develop an image classifier is
+that it only supports 64-bit architectures~\cite{tensorflow-sysreq}.
+Therefore, it will not run as-is on a 32-bit processor, such as the one that
+the Ci40 uses. However, methods exist to generate a 32-bit model from a
+standard TensorFlow model exist, and are provided by the project itself. Arm,
+the mobile chip designer and manufacturer, provide a detailed tutorial for
+achieving this~\cite{arm-tensorflow32bit}. Theoretically it would then be
+possible to use this compiled 32-bit TensorFlow model onboard the Ci40 device
+for embedded classifier operations.
+
+Another possible solution would have been to use an alternative deep learning
+framework. Other possibilities included using the Caffe deep learning
+framework~\cite{jia2014caffe}, or a high-level framework like
+Keras~\cite{keras}. However, the overwhelming amount of tutorials and
+documentation for TensorFlow available on the Internet meant that it was
+still a sensible choice of framework.
 
 \section{Developing The Remote Sensor Code}
 The \gls{6lowpan} clicker that the motion and camera sensors use runs on a
@@ -231,11 +338,11 @@ obtained from the camera module.
 \subsubsection{Read-Only Register Random Number Generator}
 The camera module used on the camera sensor is the OV7670-VL2A CMOS sensor,
 and a datasheet is readily available online~\cite{omnivisiondatasheet}.
-Included in the datasheet is a list of the sensor's registers, detailing the
+Included in the datasheet is a list of the sensor's registers, detailing each
 register's:
 
 \begin{itemize}
-  \item One byte address (in hexadecimal),
+  \item One-byte address (in hexadecimal),
   \item Name of the register,
   \item The default hexadecimal value,
   \item Whether it can be read and/or written to,

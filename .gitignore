@@ -226,6 +226,8 @@ diff*
 # classify files
 classify/gold_standard_data.csv
 classify/all_images.csv
+classify/testdata.csv
+classify/images
 
 # detect 
 detect/obj_mikro-e
