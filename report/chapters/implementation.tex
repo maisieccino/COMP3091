@@ -5,9 +5,9 @@ during the course of the project, and that would be wholly out of scope. So
 throughout this project, the idea has been to build prototypes that
 demonstrate that a fully production-ready solution is viable.
 
-A lot of the development work was also slowed down by a number of unforseen
-hardware issues, which are detailed in this chapter along with other
-implementation details.
+A lot of the development work, however, was also slowed down by a number of
+unforseen hardware issues, which are detailed in this chapter along with
+other implementation details.
 
 \section{Developing The Base Station Code}
 The main base station program is just a \acrshort{tcp} server that handles
@@ -21,8 +21,8 @@ development and pseudocode-like syntax.
 The core language library also includes the \texttt{socket} library, which
 provides an easy to use, low-level interface for opening and accepting UDP
 and \acrshort{tcp} connections. The server has a global dictionary that maps
-the id numbers of sensor pairs to the id of a camera sensor and the id of a
-motion sensor. This dictionary is populated from sensors which send an
+the numerical IDs of sensor pairs to the ID of a camera sensor and the ID of
+a motion sensor. This dictionary is populated from sensors which send an
 identification (\texttt{id}) command, broadcasting their unique
 \texttt{sensor\_id} and their \texttt{pair\_id}. This means that, when a
 motion sensor sends a motion detection command to the server, the server can
@@ -142,9 +142,9 @@ training can occur in batches.
 The biggest drawback to using TensorFlow to develop an image classifier is
 that it only supports 64-bit architectures~\cite{tensorflow-sysreq}.
 Therefore, it will not run as-is on a 32-bit processor, such as the one that
-the Ci40 uses. However, methods exist to generate a 32-bit model from a
-standard TensorFlow model exist, and are provided by the project itself. Arm,
-the mobile chip designer and manufacturer, provide a detailed tutorial for
+the Ci40 uses. However, methods to generate a 32-bit model from a standard
+TensorFlow model exist, and are provided by the project itself. Arm, the
+mobile chip designer and manufacturer, provide a detailed tutorial for
 achieving this~\cite{arm-tensorflow32bit}. Theoretically it would then be
 possible to use this compiled 32-bit TensorFlow model onboard the Ci40 device
 for embedded classifier operations.
@@ -159,13 +159,13 @@ still a sensible choice of framework.
 \section{Developing The Remote Sensor Code}
 The \gls{6lowpan} clicker that the motion and camera sensors use runs on a
 \acrfull{rtos} called \textit{Contiki}~\cite{contiki}. The code that runs on
-these devices has to be flashed to the onboard flash memory. Therefore,
-Creator provide their own toolchain for compiling and flashing user code.
-This, however, was extremely difficult to set up, and a lot of time was spent
-obtaining the tooling, attempting to install the code, and being able to
-access the clicker from my computers. A lot of documentation was missing or
-not provided, which made independent investigations into the source code
-necessary.
+these devices has to be flashed to the onboard flash memory. Therefore, to
+assist with development, Creator provide their own toolchain for compiling
+and flashing user code. This, however, was extremely difficult to set up, and
+a lot of time was spent obtaining the tooling, attempting to install the
+code, and being able to access the clicker from desktop computers. A lot of
+documentation was missing or not provided, which made independent
+investigations into the source code necessary.
 
 Another issue was with writing the sensor code itself. The only provided
 documentation for Contiki is a handful of examples on its source code
@@ -195,7 +195,8 @@ reliability of the \gls{6lowpan} connection. It often took multiple minutes
 or more for the remote sensors to connect to the base station, regardless of
 whether it was a \acrshort{tcp} connection or a \acrshort{udp} connection.
 Sometimes, the devices would not connect at all, and the debugging server
-(when it worked) reported multiple dropped messages. Since the Ci40 uses the
+(when it worked) reported multiple dropped messages (see
+Figure~\ref{fig:missingmessages} for server output). Since the Ci40 uses the
 2.4 \acrshort{ghz} frequency band, which is shared with many WiFi standards
 as well as Bluetooth, there is a possibility that this might be caused by
 interference between these devices, especially since all of the testing
@@ -226,6 +227,14 @@ connection. In addition to this, code designed to run on the camera clicker
 was not developed because it would be extremely similar to the motion sensor
 code, albeit with the camera processing code instead of the motion sensor
 event handling code.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{missingmessages}
+  \caption{Screenshot of a terminal image showing the debugging server
+  missing messages from the remote sensor.}
+  \label{fig:missingmessages}
+\end{figure}
 
 \subsection{Working With The Camera Click Module}
 One of the biggest obstacles during the project was working with the
@@ -288,7 +297,7 @@ standard) to let the master device know that it is ready for commands.
 \end{figure}
 
 \subsubsection{Getting Camera Output}
-The code in Section~\ref{code:camera-base} shows the code used to attempt to
+The code in section~\ref{code:camera-base} shows the code used to attempt to
 obtain output from the camera sensor, installed onto one of the Ci40's
 \gls{mikrobus} ports. It works by initialising the \acrshort{spi} pins and
 setting speed and other settings, before waiting for the camera to send a
@@ -369,20 +378,11 @@ return \texttt{0x7F} and \texttt{0xA2} respectively.
 
 However, when this was attempted on the \texttt{camera\_base} application
 (see Section~\ref{code:camera-base} lines 141\textendash{}144), the program
-received random numbers each time (see Figure~\ref{fig:missingmessages} for
-server output). Either one of two explanations is possible\textemdash{}either
+received random numbers each time. Either one of two explanations is possible\textemdash{}either
 the code to read from the register is incorrect, or the camera click board is
 defective. As with trying to read the image itself, it is impossible to
 conclude which of these explanations is correct without being able to access
 the \textit{MikroElektronika} source code.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.8\textwidth]{missingmessages}
-  \caption{Screenshot of a terminal image showing the debugging server
-  missing messages from the remote sensor.}
-  \label{fig:missingmessages}
-\end{figure}
 
 \section{Developing The API Server}
 The \acrshort{api} server was built entirely using the Node.js

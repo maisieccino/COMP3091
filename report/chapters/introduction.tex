@@ -37,21 +37,22 @@ the camera traps would not be able to be sent back to a web server, so any
 kind of image processing and classification would have to be performed
 on-device.
 
-Another limitation is the devices being used for the project. The main ``base
+Another limitation is the devices provided for the project. The main ``base
 station'' device is the Creator Ci40 developer board, designed to ``allow
 developers to rapidly create connected products''~\cite{creatorci40}. This
-ability to rapidly prototype on the board, which has a \acrshort{mips}-based
-processor and runs the OpenWRT Linux distribution. It also contains a WiFi
-radio, useful for communicating with the device and debugging code on it
-during development, and a \gls{6lowpan} radio, useful for communicating with
-nearby devices.
+ability to rapidly prototype on the board, which has a MIPS-based processor
+and runs the OpenWRT Linux distribution, means that, in theory, it is a
+perfect match for this project. It also contains a WiFi radio, useful for
+communicating with the device and debugging code on it during development,
+and a \gls{6lowpan} radio, useful for communicating with nearby devices.
 
-The sensor devices were also provided as part of the project. They consist of
-each sensor board integrated onto a \textit{MikroElektronika} \gls{6lowpan}
-clicker board~\cite{mikroeclick}. This board runs a \acrfull{rtos}, which
-allows the board to respond very quickly to changes in sensor input, as well
-as the ability to be battery powered and the inclusion of a \gls{6lowpan}
-radio, to communicate with the base station.
+The sensor devices were also provided as part of the project. They each
+consist of a sensor board integrated onto a \textit{MikroElektronika}
+\gls{6lowpan} clicker board~\cite{mikroeclick}. These boards run a
+\acrfull{rtos}, which allows the board to respond very quickly to changes in
+sensor input, as well as run with a low power consumption (because of less
+computation overhead) and the inclusion of a \gls{6lowpan} radio, to
+communicate with the base station.
 
 Another requirement arising from the intended deployment scenario is that the
 system needs to be able to run on battery power, or indeed a low-voltage
@@ -116,8 +117,8 @@ having more labour time for other scientific activities.
 Using IoT and Edge Cloud Systems}
 The \textit{Where's The Bear} project~\cite{elias2017s} involves a similar
 system to the one theorised in this project; however one key difference is
-that they run a server onsite, at a headquarters building, allowing them more
-easily transmit images from the camera traps to a server with higher
+that they run a server on-site, at a headquarters building, allowing them
+more easily transmit images from the camera traps to a server with higher
 processing power than a low-powered device. The authors crucially also
 deployed this to the wild with an accuacy of ``at least 0.90''. Another key
 difference is that rather than develop their own deep learning model, they
@@ -136,6 +137,6 @@ operating lifetime of the sensors as much as possible. Such a project like
 this demonstrates that the tools and technology exist to build an almost
 completely autonomous sensing system that can be deployed once and never has
 to be maintained. The authors also used more powerful hardware in their
-deployment than used in this project, the Raspberry Pi B~\cite{raspberrypib},
-which can easily handle more computationally-intensive tasks, like image
-processing and running deep learning models.
+deployment than the one used in this project, the Raspberry Pi
+B~\cite{raspberrypib}, which can easily handle more computationally-intensive
+tasks, like image processing and running deep learning models.

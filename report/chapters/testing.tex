@@ -16,7 +16,7 @@ by Facebook, was the natural choice of test framework for the project, thanks
 to its ease of setup and use, as well as a very straightforward library. Jest
 exposes an \texttt{expect} object that allows the developer to write
 \acrfull{bdd}-style tests that read almost like sentences, such as ``expect
-this status code to be 200''. The Jest project also feature very extensive
+this status code to be 200''. The Jest project also features very extensive
 documentation about using the \texttt{expect} object on their
 website~\cite{jest-expect}.
 
@@ -43,15 +43,16 @@ A test script was also added to the root of the project, inside the
 \texttt{package.json} file, that allows for all of the project's tests to be
 run at once. This was then integrated with the JavaScript packages
 \texttt{husky} and \texttt{lint-staged} so that the code was linted,
-formatted, and all the tests run prior to a commit being created. The commit
-would then be cancelled if there was a linter error or one or more tests failed.
+formatted, and all the tests run prior to a Git commit being created. The
+commit would then be cancelled if there was a linter error or one or more
+tests failed.
 
 \subsection{Creating The Unit Tests}
 The unit tests were derived from the expectations held on how the code
 representations of the data models (for instance, the JavaScript classes that
 represent the base stations, sensor pairs and readings) are initialised with
-correct values, and validate their possible input values correctly. For
-instance, each sensor pair has a \texttt{camera\_id} and a
+correct values, and how they validate their possible input values correctly.
+For instance, each sensor pair has a \texttt{camera\_id} and a
 \texttt{motion\_id} that stores the identifiers for the camera and motion
 sensors in that pair. Those IDs should be positive integers, so tests must be
 devised that ensure that the model accepts positive integers and rejects any
@@ -61,10 +62,10 @@ possible.
 \subsection{Creating The Integration Tests}
 
 The integration tests involve testing that the server as a whole works as
-intended, that when an end user sends correctly-formatted input they get the
-expected output, and if they don't they get the correct error message. This
-is sometimes referred to as textit{black-box testing}, since you are not
-testing the code itself\textemdash{}rather, you are testing the
+intended; that when an end user sends correctly-formatted input they get the
+expected output, and if they do not, then they get the correct error message.
+This is sometimes referred to as \textit{black-box testing}, since you are
+not testing the code itself\textemdash{}rather, you are testing the
 \textit{system} as if you are the end user.
 
 To help set up and run the \acrshort{http} requests and test the server
